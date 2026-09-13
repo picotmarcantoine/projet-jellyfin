@@ -1,3 +1,7 @@
+<?php
+require_once(__DIR__ . '/config/databaseconnect.php');
+?>
+
 
 
 <!DOCTYPE html>
@@ -11,6 +15,19 @@
     </header>
 
     <body>
+        <p> yoyo
+        <?php 
+            $requetesql = $mysqlClient->prepare('SELECT * FROM Utilisateur');
+
+            $requetesql -> execute();
+
+            $utilisateurs = $requetesql->fetchAll();
+            
+            foreach ($utilisateurs as $utilisateur){
+                echo $utilisateur ;
+            }
+        ?>
+        </p>
 
     </body>
     

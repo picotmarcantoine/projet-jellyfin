@@ -15,19 +15,23 @@ require_once(__DIR__ . '/config/databaseconnect.php');
     </header>
 
     <body>
-        <p> yoyo
-        <?php 
-            $requetesql = $mysqlClient->prepare('SELECT * FROM Utilisateur');
 
-            $requetesql -> execute();
+        <form>    
+            <ul><li>
+                <a href='inscription.php'> 
+                    <input type="button" name="inscription_utilisateur"  value="inscription"> 
+                    </input> 
+                </a>
+            </li>
 
-            $utilisateurs = $requetesql->fetchAll();
-            
-            foreach ($utilisateurs as $utilisateur){
-                echo $utilisateur ;
-            }
-        ?>
-        </p>
+            <li> 
+                <a href='connexion.php'> 
+                    <input type="button" name="connexion_utilisateur" action="" method="post" value="connexion">
+                    </input> 
+                </a>
+            </li>
+            </ul>
+        </form>
 
     </body>
     

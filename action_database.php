@@ -6,6 +6,10 @@ require_once(__DIR__ . '/config/databaseconnect.php');
 <?php 
 
 function inscrire_utilisateur($new_email, $newpseudo, $new_motdepasse) {
+    
+    ///egalement possible de passer $mysqlClient en parametres ! (ce serait mieux)
+    global $mysqlClient ;
+
     $requete_sql = $mysqlClient->prepare("SELECT email FROM Utilisateur WHERE email = :email ");
     $requete_sql->execute([':email' => $new_email]);
 
@@ -30,7 +34,7 @@ function inscrire_utilisateur($new_email, $newpseudo, $new_motdepasse) {
     ///pour inserer le meme dans la table d'authentification
     $requete_sql = $mysqlClient->prepare("SELECT id_u FROM Utilisateur WHERE email = :email ");
     $requete_sql->execute([':email' => $new_email]);
-    $resulat_requete = $requete_sql->fetch()
+    $resulat_requete = $requete_sql->fetch();
 
     ///insertion du mot de passe
     $requete_sql = $mysqlClient->prepare("INSERT INTO Authentification(id_u, mot_de_passe) VALUES( :id_u, :mot_de_passe)");
@@ -38,5 +42,7 @@ function inscrire_utilisateur($new_email, $newpseudo, $new_motdepasse) {
     echo "vous êtes desormais inscrit $newpseudo ";
     return ;
 }
+
+
 
 ?>

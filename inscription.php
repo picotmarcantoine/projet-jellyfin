@@ -1,6 +1,8 @@
 <?php
 require_once(__DIR__ . '/config/databaseconnect.php');
 
+
+
 ?>
 
 
@@ -8,5 +10,6 @@ require_once(__DIR__ . '/config/databaseconnect.php');
     <input type='email' name='new_user_mail' placeholder='entrez votre email ici'>  </input>
     <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici'>  </input>
     <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici'> </input>
-    <input type='submit'> </input>
+    <input type="hidden" name='provenance' value='inscription'> </input>
+    <input type='submit' name='submit_inscription'> </input>
 </form>

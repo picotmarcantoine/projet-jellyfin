@@ -1,5 +1,7 @@
 <?php
 require_once(__DIR__ . '/config/databaseconnect.php');
+require_once(__DIR__ . '/fonctions_database.php');
+
 ?>
 
 
@@ -8,7 +10,7 @@ require_once(__DIR__ . '/config/databaseconnect.php');
 <html>
     <head>
         <title>Suivi Jellyfin.</title>
-        <meta charset="utf-8" />
+        <meta charset="utf-8" />x
     </head>
 
     <header>

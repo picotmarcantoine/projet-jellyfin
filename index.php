@@ -12,10 +12,6 @@ require_once(__DIR__ . '/config/databaseconnect.php');
     </head>
 
     <header>
-    </header>
-
-    <body>
-
         <form>    
             <ul><li>
                 <a href='inscription.php'> 
@@ -32,6 +28,20 @@ require_once(__DIR__ . '/config/databaseconnect.php');
             </li>
             </ul>
         </form>
+
+    </header>
+
+    <body>
+        <?php
+        if ($utilisateur->is_utilisateur_connecte == True) {
+            echo 'salut !' ;
+        }
+        echo 'au revoir' ;
+        ?>
+
+        
+
+
 
     </body>
     

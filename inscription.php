@@ -2,7 +2,6 @@
 require_once(__DIR__ . '/config/databaseconnect.php');
 
 
-
 ?>
 
 
@@ -11,5 +10,13 @@ require_once(__DIR__ . '/config/databaseconnect.php');
     <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici'>  </input>
     <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici'> </input>
     <input type="hidden" name='provenance' value='inscription'> </input>
-    <input type='submit' name='submit_inscription'> </input>
+    <input type='submit'> </input>
 </form>
+
+<?php 
+///A BOSSER
+if (isset($erreur) AND !empty($erreur)) {
+    echo $code_erreur ;
+}
+
+?>

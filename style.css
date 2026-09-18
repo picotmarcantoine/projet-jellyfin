@@ -1,0 +1,44 @@
+header {
+    display : flex ;
+    justify-content: space-between ;
+    
+}
+
+header a {
+    text-decoration : none ;
+
+}
+
+
+.bouton_home{
+    align-items : center ;
+    justify-content: center ;
+    display : flex ;
+    border : 1px black solid ;
+
+}
+
+
+header h3 {
+    font-size : 200% ;
+    margin : 0.5vw 1vw ;
+    
+    
+}
+
+
+.bouton-connexion{
+    margin : 1vw ;
+    font-size : 100% ;
+    
+}
+
+header ul {
+    padding : 0px ;
+    border : 1px black solid ;
+    list-style: none ;
+
+}
+
+
+

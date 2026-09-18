@@ -1,35 +1,55 @@
 <?php
-require_once(__DIR__ . '/config/databaseconnect.php');
-require_once(__DIR__ . '/fonctions_database.php');
+require_once('config/databaseconnect.php');
+require_once('fonctions_database.php');
+
+
+$is_utilisateur_connecte = false ;
 
 
 
 ///si une redirection a ete faite pour l inscription (on le sait grace au champ caché dans le formulaire)
-if ($_POST['provenance'] == 'inscription'){
+if (isset($_POST['provenance'])){
+    if ($_POST['provenance'] == 'inscription'){
+        if (!isset($_POST['new_user_mail']) OR !isset($_POST['new_user_pseudo'])
+        OR empty($_POST['new_user_mail']) OR empty($_POST['new_user_pseudo'])){
+            echo "Vous n'avez pas rempli tous les champs demandés !" ;
+            ///PAS DE EXIT car sinon le script html ne s execute plus et donc n affiche pas la page comme je veux
+            return;
+        }
 
-    if (!isset($_POST['new_user_mail']) OR !isset($_POST['new_user_pseudo'])
-    OR empty($_POST['new_user_mail']) OR empty($_POST['new_user_pseudo'])){
+        ///evite les espaces et autres caracteres invalides (qui pourraient etre dus aux fautes de frappes ?)
+        $email_corrige = filter_var($_POST['new_user_mail'], FILTER_SANITIZE_EMAIL) ;
+        if (filter_var($email_corrige, FILTER_VALIDATE_EMAIL) === false){
+            echo "Votre e-mail n'est pas valide !" ;
+            return ;
+        }
 
-
-
-    ///PAS FINI !!!
-        $erreur = True ;
-        $code_erreur = "Vous n\'avez pas rempli tous les champs demandés !" ;
-        header("Location:/mise_a_jour_jellyfin/inscription.php?erreur=$erreur&code_erreur=$code_erreur") ;
-        exit();
-    }
-
-    ///ajout condition email valide ?
-
-
-    else {
-        $user_mail = $_POST['new_user_mail'] ;
+        ///grace aux returns au dessus, si les conditions sont fausses alors on ajoute l utilisateur dans la bdd
+        $user_mail = $email_corrige ;
         $user_name = $_POST['new_user_pseudo'] ;
         $user_pwd = $_POST['new_user_password'] ;
         $nouvel_utilisateur = new Gestion_utilisateur();
         $nouvel_utilisateur->inscrire_utilisateur($user_mail, $user_name , $user_pwd);
     }
-    
+}
+
+
+
+///si la redirection vient de la page de connexion
+if (isset($_POST['provenance'])){
+    if ($_POST['provenance'] == 'connexion'){
+        if (!isset($_POST['user_mail']) OR empty($_POST['user_mail'])){
+            echo "Vous n'avez pas rempli tous les champs demandés !" ;
+            ///PAS DE EXIT car sinon le script html ne s execute plus et donc n affiche pas la page comme je veux
+            return;
+        }
+
+        $user_mail = $_POST['user_mail'];
+        $user_pwd = $_POST['user_password'] ;
+        $utilisateur = new Gestion_utilisateur() ;
+        $utilisateur->connecter_utilisateur($user_mail, $user_pwd);
+
+    }
 }
 
 

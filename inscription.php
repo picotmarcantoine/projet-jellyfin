@@ -1,22 +1,37 @@
 <?php
-require_once(__DIR__ . '/config/databaseconnect.php');
-
 
 ?>
 
 
-<form method='post' action='action_database.php'>
-    <input type='email' name='new_user_mail' placeholder='entrez votre email ici'>  </input>
-    <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici'>  </input>
-    <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici'> </input>
-    <input type="hidden" name='provenance' value='inscription'> </input>
-    <input type='submit'> </input>
-</form>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Connexion Suivi Jellyfin.</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-<?php 
-///A BOSSER
-if (isset($erreur) AND !empty($erreur)) {
-    echo $code_erreur ;
-}
+    <header>
+        <?php
+        include('header.php');
+        ?>
+    </header>
 
-?>
+    <form method='post' action=''>
+        <input type='email' name='new_user_mail' placeholder='entrez votre email ici' required>  </input>
+        <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici' maxlength="25" required>  </input>
+        <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici' required> </input>
+        <input type="hidden" name='provenance' value='inscription'> </input>
+        <input type='submit'> </input>
+    </form>
+
+    <?php 
+    include('action_database.php') ;
+
+    ///A BOSSER
+
+    ?>
+
+    <footer>
+    </footer>
+</html>

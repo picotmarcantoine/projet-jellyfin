@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/config/databaseconnect.php');
+require_once('config/databaseconnect.php');
 require_once(__DIR__ . '/config/mysql.php');
 
 
@@ -90,7 +90,7 @@ class Gestion_utilisateur {
         $requete_sql = $this->mysqlClient->prepare("SELECT id_u, email FROM Utilisateur WHERE email = :email ;");
         $requete_sql->execute([':email' => $email]);
         if ($requete_sql->rowCount() == 0) {
-            echo "vous n'avez pas de compte ou l'email n'est pas bon !"; 
+            echo "ous n'avez pas de compte ou l'email n'est pas bon !"; 
             return ;
         }
         $resulat_requete = $requete_sql->fetch();

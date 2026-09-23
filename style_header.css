@@ -1,0 +1,74 @@
+header {
+    border : 2px black solid ;
+    border-radius: 2vH ;    
+    display : grid ;
+    grid-template-columns: 15% 70% 15%  ;
+    grid-template-rows: minmax(8vh , 10vh) ;
+    justify-content: space-between ;
+    margin : 0.5vw 1vw ;
+    
+
+    /* a modifier apres */
+    background-color : rgb(124, 248, 124) ;
+}
+
+header a {
+    text-decoration : none ;
+}
+
+.etat_site{
+    margin: 0px ;
+    padding : 0px ;
+    font-size : clamp(0.5rem, 5vw ,8rem) ;
+    display : flex ;
+    align-items : center ;
+    justify-content: center ;
+}
+
+
+.bouton_home{
+    align-items : center ;
+    justify-content: center ;
+    display : flex ;
+    font-size : clamp(0.5rem, 2vw ,8rem) ;
+
+}
+
+
+header h3 {
+    font-size : clamp(0.2rem, 8vw ,200%);
+    color : #000000 ;
+}
+
+header form{
+    height : 100% ;
+    width : 100% ; 
+    display : grid ;
+}
+
+header ul {
+    align-items : center ;
+    display : grid ;
+    grid-template-rows: auto ;
+    margin : 0px ;
+    padding : 0px ;
+    list-style: none ;
+    justify-content: center;
+
+}
+
+
+
+.bouton-connexion{
+    border : 1px black solid  ;
+    border-radius: 5px ;
+    display: flex ;
+    font-size : 100% ;
+    
+}
+
+/*
+FIN HEADER FIN HEADER FIN HEADER FIN HEADER FIN HEADER 
+FIN HEADER FIN HEADER FIN HEADER FIN HEADER FIN HEADER 
+FIN HEADER FIN HEADER FIN HEADER FIN HEADER FIN HEADER 
+*/

@@ -1,58 +1,37 @@
-header {
-    display : flex ;
-    justify-content: space-between ;
-    margin : 1vw ;
-    background-color : rgb(124, 248, 124) ;
-}
 
-header a {
-    text-decoration : none ;
-}
-
-.etat_site{
-    font-size : 5vw ;
-    display : flex ;
-    align-items : center ;
-    justify-content: center ;
-}
-
-
-.bouton_home{
-    align-items : center ;
-    justify-content: center ;
-    display : flex ;
-    border : 1px black solid ;
-
-}
-
-
-header h3 {
-    font-size : 200% ;
-    margin : 0.5vw 1vw ;
-    color : #000000 ;
-    
-    
-}
-
-header ul {
-    align-items : center ;
-    justify-content: center ;
+.corps_page {
     display : grid ;
     grid-template-rows: auto auto ;
-    padding : 0px ;
-    border : 1px black solid ;
-    list-style: none ;
+    grid-template-columns: auto ;
+    margin : 5vw ;
+    border: 1px black solid;
+
 
 }
 
-.bouton-connexion{
-    display : flex ;
-    margin : 1vw ;
-    font-size : 100% ;
-    
+.post{
+    border : 2px grey solid ;
+    background-color: #B1B1B1;
+    margin : 10px ;
 }
 
+.en-tete-message{
+    border: 1px black solid;
+    display : grid ;
+    grid-template-columns: 50% 50% ;
+    margin-bottom : 15px ;
+}
 
+.pseudo_utilisateur{
+    font-weight: bold ;
+    font-size: 130% ;
+}
 
+.date_post {
+    text-align : end;
+}
 
+.message_utilisateur{
+    margin-bottom: 10px ;
 
+}

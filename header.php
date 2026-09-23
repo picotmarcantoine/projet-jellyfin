@@ -2,6 +2,10 @@
 
 ?>
 
+<head>
+    <link rel="stylesheet" href="style_header.css">
+</head>
+
 <a href='index.php' class='bouton_home'> <h3>Home</h3> </a>
 
 <p class="etat_site"> <?php 
@@ -23,3 +27,4 @@ echo "etat du site" ; ?> </p>
     </li>
     </ul>
 </form>
+

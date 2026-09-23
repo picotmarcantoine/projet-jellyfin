@@ -15,14 +15,12 @@ echo "etat du site" ; ?> </p>
     <ul><li>
         <a href='inscription.php'> 
             <input type="button" name="inscription_utilisateur"  value="Inscription" class='bouton-connexion'> 
-            </input> 
         </a>
     </li>
 
     <li> 
         <a href='connexion.php'> 
             <input type="button" name="connexion_utilisateur" action="" method="post" value="Connexion" class='bouton-connexion'>
-            </input> 
         </a>
     </li>
     </ul>

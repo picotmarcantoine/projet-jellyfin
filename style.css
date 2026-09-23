@@ -1,12 +1,12 @@
 
 .corps_page {
-    display : grid ;
-    grid-template-rows: auto auto ;
-    grid-template-columns: auto ;
     margin : 5vw ;
     border: 1px black solid;
+}
 
-
+.bouton-creer-post {
+    font-size: 150px ;
+    background-color: green ;
 }
 
 .post{

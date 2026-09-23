@@ -18,11 +18,11 @@
     </header>
 
     <form method='post' action=''>
-        <input type='email' name='new_user_mail' placeholder='entrez votre email ici' required>  </input>
-        <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici' maxlength="25" required>  </input>
-        <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici' required> </input>
-        <input type="hidden" name='provenance' value='inscription'> </input>
-        <input type='submit'> </input>
+        <input type='email' name='new_user_mail' placeholder='entrez votre email ici' required>  
+        <input type='text' name='new_user_pseudo' placeholder='entrez votre pseudo ici' maxlength="25" required> 
+        <input type='password' name='new_user_password' placeholder='entrez votre mot de passe ici' required> 
+        <input type="hidden" name='provenance' value='inscription'> 
+        <input type='submit'> 
     </form>
 
     <?php 

@@ -87,10 +87,10 @@ class Gestion_utilisateur {
 
     public function connecter_utilisateur($email, $mot_de_passe) {
         ///verifie si un compte correspond a l email dans la BDD
-        $requete_sql = $this->mysqlClient->prepare("SELECT id_u, email FROM Utilisateur WHERE email = :email ;");
+        $requete_sql = $this->mysqlClient->prepare("SELECT id_u, pseudo, email FROM Utilisateur WHERE email = :email ;");
         $requete_sql->execute([':email' => $email]);
         if ($requete_sql->rowCount() == 0) {
-            echo "ous n'avez pas de compte ou l'email n'est pas bon !"; 
+            echo "Vous n'avez pas de compte ou l'email n'est pas bon !"; 
             return ;
         }
         $resultat_requete = $requete_sql->fetch();
@@ -101,7 +101,7 @@ class Gestion_utilisateur {
             echo 'Votre mot de passe n\'est pas bon ';
             return;
         }
-        echo 'Vous êtes connecté !' ;
+        echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> !' ;
         $this->is_utilisateur_connecte = True ;
         return;
     }
@@ -161,7 +161,16 @@ Class Interraction_bdd {
         return $resultat_requete ;
     }
 
+    public function envoyer_message($pseudo, $message){
+        $requete_sql = $this->mysqlClient->prepare('SELECT id_u FROM Utilisateur WHERE pseudo = :pseudo') ;
+        $requete_sql->is_execute([':pseudo'=>$pseudo]);
+        $id_utilisateur = $requete_sql->fetch();
 
+        $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
+        $requete_sql->execute([':id_u'=>$id_utilisateur, ':message'=>$message]) ;
+        echo 'Votre message est posté !' ;
+        return ;
+    }
     /* fin de classe !
     fin de classe !
     fin de classe ! */

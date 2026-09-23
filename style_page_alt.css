@@ -1,0 +1,29 @@
+/* pages connexion/inscription */
+.connexion_inscription{
+    margin : 10vw  ;
+    display : grid ;
+    justify-content: center;
+    align-items: center ;
+}
+
+
+
+/* page creation de post */
+.creation_de_post p {
+    font-size: 150% ;
+}
+
+.creation_de_post{
+    display : grid ;
+    justify-content: center;
+    align-items: center ;
+}
+
+.champ_post_utilisateur{
+    width: 60vw ;
+    height : 50vh ;
+}
+
+.submit_post{
+    display : flex ;
+}

@@ -25,8 +25,8 @@ require_once('action_database.php');
 
 
         <div class="corps_page">
-            <a href='creer_post.php'> 
-            <input type="button" name="post_utilisateur"  value="Ecrire un post" class='bouton-creer-post'> </a> 
+            <a href='creer_post.php' class='bouton-creer-post'> 
+            <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
             <?php
                 $messages = new Interraction_bdd() ;
                 $posts = $messages->lire_message(25,1) ;

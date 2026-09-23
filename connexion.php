@@ -15,9 +15,10 @@ require_once('config/databaseconnect.php');
         <?php
         include('header.php');
         ?>
+        <link rel="stylesheet" href="style_page_alt.css">
     </header>
 
-    <form method='post' action=''>
+    <form method='post' action='' class='connexion_inscription'>
         <input type='email' name='user_mail' placeholder='entrez votre email ici' required>  
         <input type='password' name='user_password' placeholder='entrez votre mot de passe ici' required> 
         <input type="hidden" name='provenance' value='connexion'> 

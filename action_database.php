@@ -1,10 +1,7 @@
 <?php
+session_start() ;
 require_once('config/databaseconnect.php');
 require_once('fonctions_database.php');
-
-
-$is_utilisateur_connecte = false ;
-
 
 
 ///si une redirection a ete faite pour l inscription (on le sait grace au champ caché dans le formulaire)
@@ -52,6 +49,16 @@ if (isset($_POST['provenance'])){
     }
 }
 
+
+if (isset($_POST['provenance'])){
+    if ($_POST['provenance'] == 'creer_post'){
+    
+    /* A FINIR */
+    /* A FINIR */
+    /* A FINIR */
+    
+    }
+}
 
 
 ?>

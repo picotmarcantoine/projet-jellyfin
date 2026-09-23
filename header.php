@@ -20,8 +20,14 @@ echo "etat du site" ; ?> </p>
 
     <li> 
         <a href='connexion.php'> 
-            <input type="button" name="connexion_utilisateur" action="" method="post" value="Connexion" class='bouton-connexion'>
+            <input type="button" name="connexion_utilisateur" value="Connexion" class='bouton-connexion'>
         </a>
+    </li>
+
+    <li>
+        <a href='deconnexion.php'>
+            <input type='button' name='deconnexion' value ='Deconnexion' class='bouton-connexion'>
+        </a>   
     </li>
     </ul>
 </form>

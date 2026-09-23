@@ -1,4 +1,6 @@
 <?php
+session_start() ;
+
 require_once('config/databaseconnect.php');
 require_once(__DIR__ . '/config/mysql.php');
 
@@ -34,13 +36,12 @@ class Connexion_bdd {
 
 class Gestion_utilisateur {
     public $mysqlClient ;
-    public $is_utilisateur_connecte ;
+
     ///STOCKER L'ID utilisateur dans des cookies !
 
     public function __construct(){
         $connect_bdd = new Connexion_bdd();
         $this->mysqlClient = $connect_bdd->get_connexion() ;
-        $this->is_utilisateur_connecte = False ;
     }
 
     public function inscrire_utilisateur($new_email, $newpseudo, $new_mot_de_passe) {
@@ -63,7 +64,6 @@ class Gestion_utilisateur {
             return ;
         }
 
-
         $requete_sql = $this->mysqlClient->prepare("INSERT INTO Utilisateur(pseudo, email) VALUES( :pseudo , :email)");
         $requete_sql->execute([':pseudo' => $newpseudo, ':email' => $new_email]);
 
@@ -80,7 +80,7 @@ class Gestion_utilisateur {
         
         //connecte l'utilisateur
         $this->connecter_utilisateur($new_email, $new_mot_de_passe);
-
+        
         return ;
     }
 
@@ -102,7 +102,9 @@ class Gestion_utilisateur {
             return;
         }
         echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> !' ;
-        $this->is_utilisateur_connecte = True ;
+        $_SESSION['pseudo'] = $resultat_requete['pseudo'] ;
+        $_SESSION['mail'] = $resultat_requete['email'] ;
+        $_SESSION['is_utilisateur_connecte'] = True ;
         return;
     }
 

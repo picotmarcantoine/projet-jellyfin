@@ -1,7 +1,12 @@
 <?php
+session_start() ;
+$id_session = session_id() ;
+
+
 require_once('config/databaseconnect.php');
 require_once('fonctions_database.php');
 require_once('action_database.php');
+
 
 ?>
 
@@ -25,6 +30,9 @@ require_once('action_database.php');
 
 
         <div class="corps_page">
+            <p><?php echo $_SESSION['is_utilisateur_connecte'] . ' ' . 'test' . ' ' . $id_session ; ?></p>
+
+
             <a href='creer_post.php' class='bouton-creer-post'> 
             <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
             <?php

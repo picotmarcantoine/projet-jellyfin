@@ -45,87 +45,100 @@ class Gestion_utilisateur {
     }
 
     public function inscrire_utilisateur($new_email, $newpseudo, $new_mot_de_passe) {
-    ///ajouter try/catch / transaction (usuggere par claude) pour faure soit reussir toutes les requetes soit aucune !
+    ///ajouter try/catch / transaction (suggere par claude) pour faure soit reussir toutes les requetes soit aucune !
+        try{
+            
+            $this->mysqlClient->beginTransaction();
+        ///verifie si l email est dans la BDD
+            $requete_sql = $this->mysqlClient->prepare("SELECT email FROM Utilisateur WHERE email = :email ");
+            $requete_sql->execute([':email' => $new_email]);
+            /// si besoin de traiter les donnes en tableau php : $resultat_requete = $requete_sql->fetchAll();
+            if ($requete_sql->rowCount() != 0) {
+                echo 'vous avez déja un compte avec cet email !';
+                return;
+            }
 
+        ///verifie si le pseudo est deja dans la BDD
+            $requete_sql = $this->mysqlClient->prepare("SELECT pseudo FROM Utilisateur WHERE pseudo = :pseudo");
+            $requete_sql->execute([':pseudo' => $newpseudo]);
+            /// si besoin de traiter les donnes en tableau php : $resultat_requete = $requete_sql->fetchAll();
+            if ($requete_sql->rowCount() != 0) {
+                echo 'Ce pseudo est deja utilise !' ;
+                return ;
+            }
 
-    ///verifie si l email est dans la BDD
-        $requete_sql = $this->mysqlClient->prepare("SELECT email FROM Utilisateur WHERE email = :email ");
-        $requete_sql->execute([':email' => $new_email]);
-        /// si besoin de traiter les donnes en tableau php : $resultat_requete = $requete_sql->fetchAll();
-        if ($requete_sql->rowCount() != 0) {
-            echo 'vous avez déja un compte avec cet email !';
-            return;
+            $requete_sql = $this->mysqlClient->prepare("INSERT INTO Utilisateur(pseudo, email) VALUES( :pseudo , :email)");
+            $requete_sql->execute([':pseudo' => $newpseudo, ':email' => $new_email]);
+
+            ///recuperer le Utilisateur.id_u qui vient detre cree (en auto increment) 
+            ///pour inserer le meme dans la table d'authentification
+            $requete_sql = $this->mysqlClient->prepare("SELECT id_u FROM Utilisateur WHERE email = :email ");
+            $requete_sql->execute([':email' => $new_email]);
+            $resultat_requete = $requete_sql->fetch();
+
+            /* Insertion du nouvel utilisateur dans la table Utilisateur_grade avec le grade membre*/
+            $requete_sql = $this->mysqlClient->prepare('SELECT id_grade FROM Grade WHERE nom_grade = :nom_grade') ;
+            $requete_sql->execute([':nom_grade' => 'membre']) ;
+            $resultat_requete2 = $requete_sql->fetch() ;
+
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Utilisateur_grade(id_u, id_grade) VALUES (:id_u, :id_grade)') ;
+            $requete_sql->execute([':id_u' => $resultat_requete['id_u'], ':id_grade' => $resultat_requete2['id_grade']]) ;
+
+            ///insertion du mot de passe dans la BDD
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Authentification(id_u, mot_de_passe) VALUES( :id_u, :mot_de_passe)');
+            $requete_sql->execute([':id_u' => $resultat_requete['id_u'] ,':mot_de_passe' => $new_mot_de_passe]) ;
+            echo "vous êtes desormais inscrit <strong> $newpseudo </strong> </br>";
+            
+            $this->mysqlClient->commit() ;
+
+            //connecte l'utilisateur
+            $this->connecter_utilisateur($new_email, $new_mot_de_passe);
         }
-
-    ///verifie si le pseudo est deja dans la BDD
-        $requete_sql = $this->mysqlClient->prepare("SELECT pseudo FROM Utilisateur WHERE pseudo = :pseudo");
-        $requete_sql->execute([':pseudo' => $newpseudo]);
-        /// si besoin de traiter les donnes en tableau php : $resultat_requete = $requete_sql->fetchAll();
-        if ($requete_sql->rowCount() != 0) {
-            echo 'Ce pseudo est deja utilise !' ;
-            return ;
+        catch (Exception $e) {
+            $this->mysqlClient->rollBack();
+            echo "Il y a eu une erreur surl'inscription, veuillez reessayer plus tard ou contacter le gestionnaire du site </br>" ;
+            print_r($e) ;
         }
-
-        $requete_sql = $this->mysqlClient->prepare("INSERT INTO Utilisateur(pseudo, email) VALUES( :pseudo , :email)");
-        $requete_sql->execute([':pseudo' => $newpseudo, ':email' => $new_email]);
-
-        ///recuperer le Utilisateur.id_u qui vient detre cree (en auto increment) 
-        ///pour inserer le meme dans la table d'authentification
-        $requete_sql = $this->mysqlClient->prepare("SELECT id_u FROM Utilisateur WHERE email = :email ");
-        $requete_sql->execute([':email' => $new_email]);
-        $resultat_requete = $requete_sql->fetch();
-
-        /* Insertion du nouvel utilisateur dans la table Utilisateur_grade avec le grade membre*/
-        $requete_sql = $this->mysqlClient->prepare('SELECT id_grade FROM Grade WHERE nome_grade = :nom_grade') ;
-        $requete_sql->execute([':nom_grade' => 'membre']) ;
-        $resultat_requete2 = $requete_sql->fetch() ;
-
-        $requete_sql = $this->prepare('INSERT INTO Utilisateur_grade(id_u, id_grade) VALUES (:id_u, :id_grade) ') ;
-        $requete_sql->execute([':id_u' => $resultat_requete['id_u'], ':id_grade' => $resultat_requete2['id_grade']]) ;
-
-        ///insertion du mot de passe dans la BDD
-        $requete_sql = $this->mysqlClient->prepare("INSERT INTO Authentification(id_u, mot_de_passe) VALUES( :id_u, :mot_de_passe)");
-        $requete_sql->execute([':id_u' => $resultat_requete['id_u'] ,':mot_de_passe' => $new_mot_de_passe]) ;
-        echo "vous êtes desormais inscrit $newpseudo ";
-        
-        //connecte l'utilisateur
-        $this->connecter_utilisateur($new_email, $new_mot_de_passe);
-        
         return ;
     }
 
 
     public function connecter_utilisateur($email, $mot_de_passe) {
-        ///verifie si un compte correspond a l email dans la BDD
-        $requete_sql = $this->mysqlClient->prepare("SELECT id_u, pseudo, email FROM Utilisateur WHERE email = :email ;");
-        $requete_sql->execute([':email' => $email]);
-        if ($requete_sql->rowCount() == 0) {
-            echo "Vous n'avez pas de compte ou l'email n'est pas bon !"; 
-            return ;
+        try {
+            ///verifie si un compte correspond a l email dans la BDD
+            $requete_sql = $this->mysqlClient->prepare("SELECT id_u, pseudo, email FROM Utilisateur WHERE email = :email ;");
+            $requete_sql->execute([':email' => $email]);
+            if ($requete_sql->rowCount() == 0) {
+                echo "Vous n'avez pas de compte ou l'email n'est pas bon !"; 
+                return ;
+            }
+            $resultat_requete = $requete_sql->fetch();
+
+            $requete_sql = $this->mysqlClient->prepare('SELECT mot_de_passe from Authentification WHERE id_u = :identifiant AND mot_de_passe = :mot_de_passe');
+            $requete_sql->execute([':identifiant' => $resultat_requete['id_u'] , ':mot_de_passe' => $mot_de_passe]) ;
+            if ($requete_sql->rowCount()==0) {
+                echo 'Votre mot de passe n\'est pas bon ';
+                return;
+            }
+
+            $requete_sql = $this->mysqlClient->prepare('SELECT Grade.nom_grade FROM Grade
+                JOIN Utilisateur_grade ON Utilisateur_grade.id_grade = Grade.id_grade
+                JOIN Utilisateur ON Utilisateur.id_u = Utilisateur_grade.id_u
+                WHERE Utilisateur_grade.id_u = :id_u') ;
+            $requete_sql->execute([':id_u' => $resultat_requete['id_u']]) ;
+            $grade_utilisateur = $requete_sql->fetch() ;
+
+            $_SESSION['grade'] = $grade_utilisateur['nom_grade'] ;
+            $_SESSION['id_u'] = $resultat_requete['id_u'] ;
+            $_SESSION['pseudo'] = $resultat_requete['pseudo'] ;
+            $_SESSION['mail'] = $resultat_requete['email'] ;
+            $_SESSION['is_utilisateur_connecte'] = True ;
+
+            echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> ! </br>' ;
+        } catch (Exception $e ){
+            echo "Il y a eu une erreur sur la connexion automatique, veuillez reessayer plus tard ou contacter le gestionnaire du site </br>" ;
+            print_r($e) ;
         }
-        $resultat_requete = $requete_sql->fetch();
-
-        $requete_sql = $this->mysqlClient->prepare('SELECT mot_de_passe from Authentification WHERE id_u = :identifiant AND mot_de_passe = :mot_de_passe');
-        $requete_sql->execute([':identifiant' => $resultat_requete['id_u'] , ':mot_de_passe' => $mot_de_passe]) ;
-        if ($requete_sql->rowCount()==0) {
-            echo 'Votre mot de passe n\'est pas bon ';
-            return;
-        }
-
-        $requete_sql = $this-mysqlClient-prepare('SELECT Grade.nom_grade FROM Grade
-            JOIN Utilisateur_grade ON Utilisateur_grade.id_grade = Grade.id_grade
-            JOIN Utilisateur ON Utilisateur.id_u = Utilisateur_grade.id_u
-            WHERE Utilisateur_grade.id_u = 19') ;
-        $requete_sql->execute([':id_u' => $resultat_requete['id_u']]) ;
-        $grade_utilisateur = $requete_sql->fetch() ;
-
-        $_SESSION['grade'] = $grade_utilisateur['nom_grade'] ;
-        $_SESSION['id_u'] = $resultat_requete['id_u'] ;
-        $_SESSION['pseudo'] = $resultat_requete['pseudo'] ;
-        $_SESSION['mail'] = $resultat_requete['email'] ;
-        $_SESSION['is_utilisateur_connecte'] = True ;
-
-        echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> !' ;
         return;
     }
 

@@ -1,5 +1,5 @@
 <?php
-session_start() ;
+
 
 require_once('config/databaseconnect.php');
 require_once(__DIR__ . '/config/mysql.php');
@@ -45,6 +45,8 @@ class Gestion_utilisateur {
     }
 
     public function inscrire_utilisateur($new_email, $newpseudo, $new_mot_de_passe) {
+    ///ajouter try/catch / transaction (usuggere par claude) pour faure soit reussir toutes les requetes soit aucune !
+
 
     ///verifie si l email est dans la BDD
         $requete_sql = $this->mysqlClient->prepare("SELECT email FROM Utilisateur WHERE email = :email ");
@@ -72,6 +74,14 @@ class Gestion_utilisateur {
         $requete_sql = $this->mysqlClient->prepare("SELECT id_u FROM Utilisateur WHERE email = :email ");
         $requete_sql->execute([':email' => $new_email]);
         $resultat_requete = $requete_sql->fetch();
+
+        /* Insertion du nouvel utilisateur dans la table Utilisateur_grade avec le grade membre*/
+        $requete_sql = $this->mysqlClient->prepare('SELECT id_grade FROM Grade WHERE nome_grade = :nom_grade') ;
+        $requete_sql->execute([':nom_grade' => 'membre']) ;
+        $resultat_requete2 = $requete_sql->fetch() ;
+
+        $requete_sql = $this->prepare('INSERT INTO Utilisateur_grade(id_u, id_grade) VALUES (:id_u, :id_grade) ') ;
+        $requete_sql->execute([':id_u' => $resultat_requete['id_u'], ':id_grade' => $resultat_requete2['id_grade']]) ;
 
         ///insertion du mot de passe dans la BDD
         $requete_sql = $this->mysqlClient->prepare("INSERT INTO Authentification(id_u, mot_de_passe) VALUES( :id_u, :mot_de_passe)");
@@ -101,10 +111,21 @@ class Gestion_utilisateur {
             echo 'Votre mot de passe n\'est pas bon ';
             return;
         }
-        echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> !' ;
+
+        $requete_sql = $this-mysqlClient-prepare('SELECT Grade.nom_grade FROM Grade
+            JOIN Utilisateur_grade ON Utilisateur_grade.id_grade = Grade.id_grade
+            JOIN Utilisateur ON Utilisateur.id_u = Utilisateur_grade.id_u
+            WHERE Utilisateur_grade.id_u = 19') ;
+        $requete_sql->execute([':id_u' => $resultat_requete['id_u']]) ;
+        $grade_utilisateur = $requete_sql->fetch() ;
+
+        $_SESSION['grade'] = $grade_utilisateur['nom_grade'] ;
+        $_SESSION['id_u'] = $resultat_requete['id_u'] ;
         $_SESSION['pseudo'] = $resultat_requete['pseudo'] ;
         $_SESSION['mail'] = $resultat_requete['email'] ;
         $_SESSION['is_utilisateur_connecte'] = True ;
+
+        echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> !' ;
         return;
     }
 
@@ -131,6 +152,15 @@ Class Interraction_bdd {
         $connect_bdd = new Connexion_bdd();
         $this->mysqlClient = $connect_bdd->get_connexion() ;
         }
+    
+    public function get_grade($user_id){
+        /* af inir
+        a fini
+        a finir
+        a finir
+        a finir */
+        $requete_sql = $this->mysqlClient->prepare('SELECT Grade.nom_grade FROM Grade,  JOIN id_u = :id_u');
+    }
     
     public function get_username($user_id){
         $requete_sql = $this->mysqlClient->prepare('SELECT pseudo FROM Utilisateur WHERE id_u = :id_u') ;
@@ -163,14 +193,10 @@ Class Interraction_bdd {
         return $resultat_requete ;
     }
 
-    public function envoyer_message($pseudo, $message){
-        $requete_sql = $this->mysqlClient->prepare('SELECT id_u FROM Utilisateur WHERE pseudo = :pseudo') ;
-        $requete_sql->is_execute([':pseudo'=>$pseudo]);
-        $id_utilisateur = $requete_sql->fetch();
-
+    public function envoyer_message($message){
         $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
-        $requete_sql->execute([':id_u'=>$id_utilisateur, ':message'=>$message]) ;
-        echo 'Votre message est posté !' ;
+        $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message]) ;
+        echo 'Votre message est posté ' . $_SESSION['pseudo'] . ' !' ;
         return ;
     }
     /* fin de classe !

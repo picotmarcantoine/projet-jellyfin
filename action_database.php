@@ -1,5 +1,5 @@
 <?php
-session_start() ;
+
 require_once('config/databaseconnect.php');
 require_once('fonctions_database.php');
 
@@ -52,11 +52,15 @@ if (isset($_POST['provenance'])){
 
 if (isset($_POST['provenance'])){
     if ($_POST['provenance'] == 'creer_post'){
-    
-    /* A FINIR */
-    /* A FINIR */
-    /* A FINIR */
-    
+        if (isset($_POST['post_utilisateur']) and !empty($_POST['post_utilisateur'])){
+
+            $message = new Interraction_bdd() ;
+            $message->envoyer_message($_POST['post_utilisateur']);
+        }
+        else {
+            echo "Veuillez ecrire un message." ;
+        }
+        
     }
 }
 

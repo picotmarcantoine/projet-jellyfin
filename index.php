@@ -30,9 +30,7 @@ require_once('action_database.php');
 
 
         <div class="corps_page">
-            <p><?php echo $_SESSION['is_utilisateur_connecte'] . ' ' . 'test' . ' ' . $id_session ; ?></p>
-
-
+            
             <a href='creer_post.php' class='bouton-creer-post'> 
             <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
             <?php

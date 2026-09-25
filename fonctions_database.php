@@ -221,9 +221,17 @@ Class Interraction_bdd {
     public function envoyer_message($message){
         ///desactive les characteres html
         $message_secure = htmlspecialchars($message, ENT_SUBSTITUTE ) ;
-        $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
-        $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message_secure]) ;
-        echo 'Votre message est posté ' . $_SESSION['pseudo'] . ' !' ;
+        try {
+            $this->mysqlCLient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
+            $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message_secure]) ;
+            echo 'Votre message est posté ' . $_SESSION['pseudo'] . ' !' ;
+            $this->mysqlCLient->commit();
+        } catch (Exception $e) {
+            $this->mysqlClient->rollBack();
+            echo "Impossible d'envoyer le message" ;
+            print_r($e) ;
+        }
         return ;
     }
     /* fin de classe !

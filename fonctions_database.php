@@ -224,11 +224,11 @@ Class Interraction_bdd {
         ///Test si le code fonctionne avant d'envoyer le message dans la BDD
         ///sinon renvoie une erreur
         try {
-            $this->mysqlCLient->beginTransaction();
+            $this->mysqlClient->beginTransaction();
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
             $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message_secure]) ;
+            $this->mysqlClient->commit();
             echo 'Votre message est posté ' . $_SESSION['pseudo'] . ' !' ;
-            $this->mysqlCLient->commit();
         } catch (Exception $e) {
             $this->mysqlClient->rollBack();
             echo "Impossible d'envoyer le message" ;

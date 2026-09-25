@@ -20,6 +20,8 @@ require_once('config/databaseconnect.php');
     </header>
 
     <form method='post' action='' class='connexion_inscription'>
+        <p> Veillez à ne pas utiliser les caractères suivants : </br>
+        < > </p>
         <input type='email' name='user_mail' placeholder='entrez votre email ici' required>  
         <input type='password' name='user_password' placeholder='entrez votre mot de passe ici' required> 
         <input type="hidden" name='provenance' value='connexion'> 

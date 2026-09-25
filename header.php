@@ -9,9 +9,21 @@
 echo "etat du site" ; ?> </p>
 
 <?php
-if (isset($_SESSION['is_utilisateur_connecte']) and $_SESSION['is_utilisateur_connecte'] == true){ ?>
+if (isset($_SESSION['is_utilisateur_connecte']) and $_SESSION['is_utilisateur_connecte'] === true){ ?>
     <form>
         <ul>
+            <?php 
+                if (isset($_SESSION['grade']) AND $_SESSION['grade'] === 'admin' OR $_SESSION['grade'] === 'super_admin'){ ?>
+                    <li> 
+                        <a href='page_moderation.php'>
+                            <input type='button' name='moderation' value ='Moderation' class='bouton-connexion'>
+                        </a>   
+                    </li>
+
+            <?php
+                }
+            ?>
+
         <li>
             <a href='deconnexion.php'>
                 <input type='button' name='deconnexion' value ='Deconnexion' class='bouton-connexion'>

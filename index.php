@@ -43,7 +43,13 @@ require_once('action_database.php');
                     <div class="post">
                         <div class='en-tete-message'>
                             <div class="pseudo_utilisateur">
-                                <?php echo $username['pseudo'] ;
+                                <?php 
+                                if (!isset($username['pseudo']) or empty($username['pseudo'])){
+                                    echo 'CET UTILISATEUR N\'EXISTE PLUS' ;
+                                } else {
+                                    echo $username['pseudo'] ;
+                                }
+                                
                                 ?>
                             </div>
 

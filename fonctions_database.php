@@ -45,6 +45,11 @@ class Gestion_utilisateur {
     }
 
     public function inscrire_utilisateur($new_email, $newpseudo, $new_mot_de_passe) {
+        ///verifie que l utilisateur n utilise pas des balises html
+        if (htmlspecialchars($new_email, ENT_QUOTES, 'UTF-8') !== $new_email OR htmlspecialchars($newpseudo, ENT_QUOTES, 'UTF-8') !== $newpseudo OR htmlspecialchars($new_mot_de_passe, ENT_QUOTES, 'UTF-8') !== $new_mot_de_passe) {
+            echo 'Erreur, les caractères suivants : </br> < > </br> sont interdits !' ;
+            return ;
+        }
     ///ajouter try/catch / transaction (suggere par claude) pour faure soit reussir toutes les requetes soit aucune !
         try{
             
@@ -91,19 +96,26 @@ class Gestion_utilisateur {
             
             $this->mysqlClient->commit() ;
 
-            //connecte l'utilisateur
-            $this->connecter_utilisateur($new_email, $new_mot_de_passe);
         }
         catch (Exception $e) {
             $this->mysqlClient->rollBack();
             echo "Il y a eu une erreur surl'inscription, veuillez reessayer plus tard ou contacter le gestionnaire du site </br>" ;
             print_r($e) ;
+            return ;
         }
+
+        //connecte l'utilisateur
+        $this->connecter_utilisateur($new_email, $new_mot_de_passe);
         return ;
     }
 
 
     public function connecter_utilisateur($email, $mot_de_passe) {
+        ///verifie que l utilisateur n utilise pas des balises html
+        if (htmlspecialchars($email, ENT_QUOTES, 'UTF-8') !== $email OR htmlspecialchars($mot_de_passe, ENT_QUOTES, 'UTF-8') !== $mot_de_passe) {
+            echo 'Erreur, les caractères suivants : </br> < > </br> sont interdits !' ;
+            return ;
+        }
         try {
             ///verifie si un compte correspond a l email dans la BDD
             $requete_sql = $this->mysqlClient->prepare("SELECT id_u, pseudo, email FROM Utilisateur WHERE email = :email ;");
@@ -136,8 +148,8 @@ class Gestion_utilisateur {
 
             echo 'Vous êtes connecté' . ' <strong>' . $resultat_requete['pseudo'] . '</strong> ! </br>' ;
         } catch (Exception $e ){
-            echo "Il y a eu une erreur sur la connexion automatique, veuillez reessayer plus tard ou contacter le gestionnaire du site </br>" ;
-            print_r($e) ;
+            echo "Il y a eu une erreur sur la connexion, veuillez reessayer plus tard ou contacter le gestionnaire du site </br>" ;
+            throw $e ;
         }
         return;
     }
@@ -207,8 +219,10 @@ Class Interraction_bdd {
     }
 
     public function envoyer_message($message){
+        ///desactive les characteres html
+        $message_secure = htmlspecialchars($message, ENT_SUBSTITUTE ) ;
         $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
-        $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message]) ;
+        $requete_sql->execute([':id_u'=>$_SESSION['id_u'], ':message'=>$message_secure]) ;
         echo 'Votre message est posté ' . $_SESSION['pseudo'] . ' !' ;
         return ;
     }

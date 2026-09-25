@@ -26,8 +26,7 @@ session_start() ;
                     <p> Bonjour <?php echo $_SESSION['pseudo']; ?> quelle est votre question ? </p>
                     <form method='post' action =''>
                         <input type='hidden' name='provenance' value='creer_post'>
-                        <textarea name='post_utilisateur' placeholder='Veuillez entrer votre message' class='champ_post_utilisateur'>
-                        </textarea>
+                        <textarea name='post_utilisateur' placeholder='Veuillez entrer votre message' class='champ_post_utilisateur'></textarea>
                         <input type ='submit' class='submit_post'>
                     </form>
                 </div>

@@ -221,6 +221,8 @@ Class Interraction_bdd {
     public function envoyer_message($message){
         ///desactive les characteres html
         $message_secure = htmlspecialchars($message, ENT_SUBSTITUTE ) ;
+        ///Test si le code fonctionne avant d'envoyer le message dans la BDD
+        ///sinon renvoie une erreur
         try {
             $this->mysqlCLient->beginTransaction();
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;

@@ -64,5 +64,18 @@ if (isset($_POST['provenance'])){
     }
 }
 
+if (isset($_POST['provenance'])){
+    $action_message = new Interraction_bdd() ;
+    if ($_POST['provenance'] == 'supprimer-post'){
+        $action_message->supprimer_message($_POST['id_post']);
+        header('Location:index.php') ;
+        exit();
+    }
+    if ($_POST['provenance'] == 'epingler-post'){ 
+        $action_message->epingler_message($_POST['id_post']);
+        header('Location:index.php') ;
+        exit();
+    }
+}
 
 ?>

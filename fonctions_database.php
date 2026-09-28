@@ -179,17 +179,28 @@ Class Interraction_bdd {
         }
     
     public function get_grade($user_id){
-        /* af inir
-        a fini
-        a finir
-        a finir
-        a finir */
-        $requete_sql = $this->mysqlClient->prepare('SELECT Grade.nom_grade FROM Grade,  JOIN id_u = :id_u');
+        $requete_sql = $this->mysqlClient->prepare('SELECT Grade.nom_grade FROM Grade 
+        INNER JOIN Utilisateur_grade ON Grade.id_grade = Utilisateur_grade.id_grade
+        INNER JOIN Utilisateur ON Utilisateur_grade.id_u = Utilisateur.id_u
+        WHERE Utilisateur.id_u = :id_u');
+        $requete_sql->execute([':id_u' => $user_id]) ;
+        $resultat_requete = $requete_sql->fetch() ;
+        return $resultat_requete ;
     }
+
     
     public function get_username($user_id){
         $requete_sql = $this->mysqlClient->prepare('SELECT pseudo FROM Utilisateur WHERE id_u = :id_u') ;
         $requete_sql->execute([':id_u'=>$user_id]) ;
+        $resultat_requete = $requete_sql->fetch() ;
+        return $resultat_requete ;
+    }
+
+    public function lire_message_epingle(){
+        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur 
+        INNER JOIN Message_epingle ON Message_utilisateur.id_post = Message_epingle.id_post 
+        WHERE Message_epingle.is_epingle = TRUE ORDER BY date_message DESC') ;
+        $requete_sql->execute() ;
         $resultat_requete = $requete_sql->fetch() ;
         return $resultat_requete ;
     }
@@ -236,6 +247,30 @@ Class Interraction_bdd {
         }
         return ;
     }
+
+    public function epingler_message($id_post){
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur WHERE id_post = :id_post') ;
+            $requete_sql->execute([':id_post'=> $id_post]) ;
+            $resultat_requete = $requete_sql->fetch() ;
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_epingle(id_post, is_epingle) VALUES(:id_post, TRUE)') ;
+            $requete_sql->execute([':id_post' => $resultat_requete['id_post']]);
+            $this->mysqlClient->commit() ;
+        } catch(Exception $e){
+            $this->mysqlClient->rollBack();
+            echo "Impossible d'epingler le message !";
+            print_r($e); 
+        }
+        return ;
+    }
+
+    public function supprimer_message($id_post){
+        $requete_sql = $this->mysqlClient->prepare('DELETE FROM Message_utilisateur WHERE id_post = :id_post') ;
+        $requete_sql->execute([':id_post'=> $id_post]) ;
+        return ;
+    }
+
     /* fin de classe !
     fin de classe !
     fin de classe ! */

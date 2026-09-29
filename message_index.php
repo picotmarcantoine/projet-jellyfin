@@ -60,6 +60,10 @@
                             }?>
                         </div>
                 </div>
+                <form action='message.php' method='get'>
+                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                    <input type='submit' value='Répondre' >
+                </form>
             </div>
 
             <?php } ?>
@@ -132,8 +136,8 @@
 
                 
                 <form action='message.php' method='get'>
-                    <input type='hidden' name='id_post' value= <?= $message['id_post']?>>
-                    <input type='submit' name ='bouton-reponse' value='Répondre' >
+                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                    <input type='submit' value='Répondre' >
                 </form>
                 <!-- adad
                 -->

@@ -215,7 +215,7 @@ Class Interraction_bdd {
         ///j obtiens la propriete "OFFSET" a remplir pour avoir une bonne pagination
         $n_page = $nombre_message*$page - $nombre_message;
         $requete_sql = $this->mysqlClient->prepare('SELECT Message_utilisateur.id_post, Message_utilisateur.id_u, 
-        Message_utilisateur.message, Message_utilisateur.date_message, Message_utilisateur.id_reponse
+        Message_utilisateur.message, Message_utilisateur.date_message
         FROM Message_utilisateur 
         LEFT JOIN Message_epingle ON Message_utilisateur.id_post = Message_epingle.id_post
         WHERE Message_epingle.id_post IS NULL
@@ -242,9 +242,10 @@ Class Interraction_bdd {
     }
 
     public function lire_reponses($id_post){
-        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Reponse_message WHERE id_post = :id_post');
+        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Reponse_message 
+        WHERE id_post = :id_post ORDER BY date_reponse DESC');
         $requete_sql->execute([':id_post' => $id_post]) ;
-        $resultat_requete = $requete_sql->fetch();
+        $resultat_requete = $requete_sql->fetchAll();
         return $resultat_requete ;
     }
 
@@ -267,24 +268,23 @@ Class Interraction_bdd {
         return ;
     }
 
-    
-    /* 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    */
-    public function repondre_message(){
-
+    public function repondre_message($id_base_message, $reponse_utilisateur){
+        try {
+            $this->mysqlClient->beginTransaction() ;
+            $message_secure = htmlspecialchars($reponse_utilisateur, ENT_SUBSTITUTE ) ;
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Reponse_message(id_post, id_u, message) 
+            VALUES(:id_base_message, :id_u, :reponse_utilisateur)') ;
+            $requete_sql->execute([':id_base_message' => $id_base_message, ':id_u' => $_SESSION['id_u'], ':reponse_utilisateur' => $message_secure]) ;
+            $this->mysqlClient->commit() ;
+        } catch (Exception $e) {
+            $this->mysqlClient->rollBack() ;
+            echo "Il y a eu une erreur, veuillez reessayer ulterieurement </br>" ;
+            echo '<pre>' ;
+            print_r($e) ;
+            echo '<pre>' ;
+        }
+        return ;
     }
-    /* 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    A FINIR 
-    */
 
 
     public function epingler_message($id_post){

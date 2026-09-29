@@ -17,7 +17,7 @@ require_once('action_database.php');
     <head>
         <title></title>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style_reponses.css">
     </head>
 
     <body>
@@ -99,14 +99,63 @@ require_once('action_database.php');
         <div name='champ_reponse_utilisateur'> 
             <form method='post' action=''>
                 <input type='hidden' name='provenance' value='envoyer_reponse'>
-                <textarea name='reponse_utilisateur' placeholder="Vous pouvez eecrire une reponse à l'utilisateur '<?= $username ?>'" class='champ_reponse_utilisateur'></textarea>
+                <input type='hidden' name='post_base' value='<?=$_GET['id_post']?>'>
+                <textarea name='reponse_utilisateur' placeholder="Vous pouvez ecrire une reponse à l'utilisateur '<?= $username ?>'" class='champ_reponse_utilisateur'></textarea>
                 <input type ='submit' class='submit_post'>
             </form>
             <?php include('action_database.php'); ?>
-
         </div>
 
-        
+
+
+
+        <div name='reponses_utilisateurs'>
+            
+            <?php 
+            $messages_reponses = new Interraction_bdd() ;
+            $reponses = $messages_reponses->lire_reponses($_GET['id_post']) ;
+
+
+            foreach ($reponses as $message){
+                $pseudo = $messages_reponses->get_username($message['id_u']);
+            ?>
+            <div class='reponses'>
+                <div class='en-tete_reponses'>
+                    <div class='pseudo_utilisateur'>
+                        <?php 
+                        echo $pseudo ;
+                        ?>
+                    </div>
+                    <div class='date_post'>
+                        <?= $message['date_reponse'] ; ?>
+                    </div>
+                </div>
+                <div class='reponses_utilisateurs'>
+                    <p>
+                    <?php
+                    echo $message['message'],"</br>";
+                    ?></p>
+                    <div class="gestion_admin">
+                        <?php 
+                        if (isset($_SESSION['grade'])) {
+                            if ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin') {
+                                ?>
+                                <form action='action_database.php' method ='post'>
+                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
+                                    <input type='hidden' name='provenance' value='supprimer-post'>
+                                    <input type='submit' name='bouton-supprimer' value='supprimer'>
+                                </form>
+                                <?php 
+                                } 
+                            }?>
+                    </div>
+                </div>
+            </div>
+            <?php
+            }
+            ?>
+
+        </div>
         
         
         <footer>

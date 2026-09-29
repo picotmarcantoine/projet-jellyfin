@@ -34,6 +34,7 @@ a.bouton-creer-post {
     display : flex ;
     justify-content: end ;
     height : 4vw ;
+    width : 100% ;
     
 }
 

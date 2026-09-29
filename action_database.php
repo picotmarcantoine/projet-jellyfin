@@ -81,6 +81,13 @@ if (isset($_POST['provenance'])){
         header('Location:index.php') ;
         exit();
     }
+    if ($_POST['provenance'] == 'envoyer_reponse'){
+        $action_message->repondre_message($_POST['post_base'],$_POST['reponse_utilisateur']);
+        $url = "message.php?id_post=" . $_POST['post_base'] ;
+        header('Location:' . $url ) ;
+        exit();
+
+    }
 }
 
 ?>

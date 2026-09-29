@@ -192,7 +192,7 @@ Class Interraction_bdd {
     public function get_username($user_id){
         $requete_sql = $this->mysqlClient->prepare('SELECT pseudo FROM Utilisateur WHERE id_u = :id_u') ;
         $requete_sql->execute([':id_u'=>$user_id]) ;
-        $resultat_requete = $requete_sql->fetch() ;
+        $resultat_requete = $requete_sql->fetchColumn() ;
         return $resultat_requete ;
     }
 
@@ -201,9 +201,10 @@ Class Interraction_bdd {
         INNER JOIN Message_epingle ON Message_utilisateur.id_post = Message_epingle.id_post 
         WHERE Message_epingle.is_epingle = TRUE ORDER BY date_message DESC') ;
         $requete_sql->execute() ;
-        $resultat_requete = $requete_sql->fetch() ;
+        $resultat_requete = $requete_sql->fetchAll() ;
         return $resultat_requete ;
     }
+    
 
     public function lire_message($nombre_message, $page){
         /*$nombre_message indique le nombre de message que l'on veut afficher sur une page, 
@@ -213,8 +214,12 @@ Class Interraction_bdd {
         ///en multipliant le nombre de message par page par la page actuelle,
         ///j obtiens la propriete "OFFSET" a remplir pour avoir une bonne pagination
         $n_page = $nombre_message*$page - $nombre_message;
-
-        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur ORDER BY date_message DESC
+        $requete_sql = $this->mysqlClient->prepare('SELECT Message_utilisateur.id_post, Message_utilisateur.id_u, 
+        Message_utilisateur.message, Message_utilisateur.date_message, Message_utilisateur.id_reponse
+        FROM Message_utilisateur 
+        LEFT JOIN Message_epingle ON Message_utilisateur.id_post = Message_epingle.id_post
+        WHERE Message_epingle.id_post IS NULL
+        ORDER BY date_message DESC
         LIMIT :nombre_entree OFFSET :nombre_page') ;
 
         /* Utilisation de bind value, car l'assignation des parametres dans exectue (comme habituellement)
@@ -226,6 +231,20 @@ Class Interraction_bdd {
         $requete_sql->execute() ;
 
         $resultat_requete = $requete_sql->fetchAll() ;
+        return $resultat_requete ;
+    }
+
+    public function lire_message_id($id_post){
+        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur WHERE id_post = :id_post') ;
+        $requete_sql->execute(['id_post' => $id_post]);
+        $resultat_requete = $requete_sql->fetch();
+        return $resultat_requete ;
+    }
+
+    public function lire_reponses($id_post){
+        $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Reponse_message WHERE id_post = :id_post');
+        $requete_sql->execute([':id_post' => $id_post]) ;
+        $resultat_requete = $requete_sql->fetch();
         return $resultat_requete ;
     }
 
@@ -248,14 +267,32 @@ Class Interraction_bdd {
         return ;
     }
 
+    
+    /* 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    */
+    public function repondre_message(){
+
+    }
+    /* 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    A FINIR 
+    */
+
+
     public function epingler_message($id_post){
         try {
             $this->mysqlClient->beginTransaction();
-            $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur WHERE id_post = :id_post') ;
-            $requete_sql->execute([':id_post'=> $id_post]) ;
-            $resultat_requete = $requete_sql->fetch() ;
+
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_epingle(id_post, is_epingle) VALUES(:id_post, TRUE)') ;
-            $requete_sql->execute([':id_post' => $resultat_requete['id_post']]);
+            $requete_sql->execute([':id_post' => $id_post]);
             $this->mysqlClient->commit() ;
         } catch(Exception $e){
             $this->mysqlClient->rollBack();
@@ -264,6 +301,21 @@ Class Interraction_bdd {
         }
         return ;
     }
+
+    public function desepingler_message($id_post){
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('DELETE FROM Message_epingle WHERE id_post = :id_post') ;
+            $requete_sql->execute([':id_post'=> $id_post]) ;
+            $this->mysqlClient->commit() ;
+        } catch(Exception $e){
+            $this->mysqlClient->rollBack();
+            echo "Impossible d'epingler le message !";
+            print_r($e); 
+        }
+        return ;
+    }
+
 
     public function supprimer_message($id_post){
         $requete_sql = $this->mysqlClient->prepare('DELETE FROM Message_utilisateur WHERE id_post = :id_post') ;

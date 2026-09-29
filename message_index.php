@@ -1,28 +1,24 @@
 <div class="message_epingle">
+    <a href='creer_post.php' class='bouton-creer-post'> 
+    <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
+    
     <?php
         $messages_epingle = new Interraction_bdd() ;
         $posts_epingles = $messages_epingle->lire_message_epingle() ;
         
-        echo '<pre>' ;
-        print_r($posts_epingles) ;
-        echo '<pre>' ;
-
         foreach ($posts_epingles as $message){
-
-            print_r($message);
 
             $username = $messages_epingle->get_username($message['id_u']) ;
             ?> 
-            <div class="post">
+            <div class="post_epingle">
                 <div class='en-tete-message'>
                     <div class="pseudo_utilisateur">
                         <?php 
-                        if (!isset($username['pseudo']) or empty($username['pseudo'])){
+                        if (!isset($username) or empty($username)){
                             echo 'CET UTILISATEUR N\'EXISTE PLUS' ;
                         } else {
-                            echo $username['pseudo'] ;
+                            echo $username ;
                         }
-                        
                         ?>
                     </div>
 
@@ -31,7 +27,7 @@
                             ///utilisation de la fonction date sur le resultat de la requete SQL puisque la table enregistre des timestamp
                             ///la fonction sert a convertir ce timestamp en date 
                             ///elle prend en argument le format de la date souhaité puis le timestamp a convertir (optionnel)
-                            echo $message['date_message'] ; 
+                            echo 'Ce message a été épinglé -' . ' ' . $message['date_message'] ; 
                         ?>
                     </div>
                 </div>
@@ -56,8 +52,8 @@
                                 
                                 <form action='action_database.php' method ='post'>
                                     <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='epingler-post'>
-                                    <input type='submit' name='bouton-epingler' value='epingler'>
+                                    <input type='hidden' name='provenance' value='desepingler-post'>
+                                    <input type='submit' name='bouton-desepingler' value='desepingler'>
                                 </form>
                                 <?php 
                                 } 
@@ -73,9 +69,7 @@
 
 
 <div class="corps_page">
-    
-    <a href='creer_post.php' class='bouton-creer-post'> 
-    <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
+
     <?php
         $messages = new Interraction_bdd() ;
         $posts = $messages->lire_message(25,1) ;
@@ -87,10 +81,10 @@
                 <div class='en-tete-message'>
                     <div class="pseudo_utilisateur">
                         <?php 
-                        if (!isset($username['pseudo']) or empty($username['pseudo'])){
+                        if (!isset($username) or empty($username)){
                             echo 'CET UTILISATEUR N\'EXISTE PLUS' ;
                         } else {
-                            echo $username['pseudo'] ;
+                            echo $username ;
                         }
                         
                         ?>
@@ -133,7 +127,17 @@
                                 } 
                             }?>
                         </div>
+                
                 </div>
+
+                
+                <form action='message.php' method='get'>
+                    <input type='hidden' name='id_post' value= <?= $message['id_post']?>>
+                    <input type='submit' name ='bouton-reponse' value='Répondre' >
+                </form>
+                <!-- adad
+                -->
+
             </div>
 
             <?php } ?>

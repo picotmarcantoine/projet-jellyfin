@@ -76,6 +76,11 @@ if (isset($_POST['provenance'])){
         header('Location:index.php') ;
         exit();
     }
+    if ($_POST['provenance'] == 'desepingler-post'){
+        $action_message->desepingler_message($_POST['id_post']);
+        header('Location:index.php') ;
+        exit();
+    }
 }
 
 ?>

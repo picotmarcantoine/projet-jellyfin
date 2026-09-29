@@ -1,15 +1,39 @@
+header{
+    margin-bottom : 5vw ;
+}
+
+body{
+    background-color: #466e69;
+}
+
+.message_epingle{
+    display : grid ;
+    grid-template-columns: auto ;
+    grid-template-rows: auto ;
+    margin : 3vw ;
+    margin-bottom: 1vw  ;
+
+}
+
+.post_epingle{
+    border : 2px grey solid ;
+    background-color: rgb(8, 8, 8);
+    color : #EEE ;
+    margin : 5px ;
+}
 
 .corps_page {
     display : grid ;
     grid-template-columns: auto ;
     grid-template-rows: auto ;
     margin : 5vw ;
-    border: 1px black solid;
+    margin-top: 1vw ;
 }
 
 a.bouton-creer-post {
     display : flex ;
     justify-content: end ;
+    height : 4vw ;
     
 }
 
@@ -21,14 +45,15 @@ a.bouton-creer-post input {
 .post{
     border : 2px grey solid ;
     background-color: #B1B1B1;
-    margin : 10px ;
+    margin : 1vw ;
 }
 
 .en-tete-message{
-    border: 1px black solid;
+    background-color: #000000;
     display : grid ;
     grid-template-columns: 50% 50% ;
     margin-bottom : 15px ;
+    color : #eee ;
 }
 
 .pseudo_utilisateur{
@@ -61,3 +86,6 @@ a.bouton-creer-post input {
     width : 95% ;
     height : 100% ;
 }
+
+
+

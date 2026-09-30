@@ -86,7 +86,22 @@ if (isset($_POST['provenance'])){
         $url = "message.php?id_post=" . $_POST['post_base'] ;
         header('Location:' . $url ) ;
         exit();
-
+    }
+    if ($_POST['provenance'] == 'supprimer-reponse'){
+        $action_message->supprimer_reponse($_POST['id_reponse']);
+        $url = "message.php?id_post=" . $_POST['post_base'] ;
+        header('Location:' . $url ) ;
+        exit();
+    }
+    if($_POST['provenance'] == 'modifier-message'){
+        ///verifie cote servveur que lutilisateur connecte est bien celui qui a envoye le post
+        if ($_SESSION['id_u'] == $_POST['message_id_u'] ) {
+            $action_message->modifier_message($_POST['id_post'], $_POST['post_utilisateur']) ;
+            header('Location:index.php') ;
+        } else {
+            echo "Vous n'etes pas a l'origine de ce post !" ;
+        }
+        exit ;
     }
 }
 

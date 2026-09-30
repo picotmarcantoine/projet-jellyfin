@@ -1,14 +1,23 @@
+<?php 
+    if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
+    ?>
+        <div class='bouton-post'>
+            <a href='creer_post.php' class='bouton-creer-post'> 
+                <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
+        </div>
+    <?php 
+    } 
+?>
+
 <div class="message_epingle">
-    <a href='creer_post.php' class='bouton-creer-post'> 
-    <input type="button" name="post_utilisateur"  value="Ecrire un post"> </a> 
     
     <?php
         $messages_epingle = new Interraction_bdd() ;
         $posts_epingles = $messages_epingle->lire_message_epingle() ;
         
         foreach ($posts_epingles as $message){
-
             $username = $messages_epingle->get_username($message['id_u']) ;
+
             ?> 
             <div class="post_epingle">
                 <div class='en-tete-message'>
@@ -35,36 +44,67 @@
                 <div class='message_utilisateur'>
                     <p>
                     <?php
-                    echo $message['message'],"</br>";
+                    echo nl2br($message['message']),"</br>";
                     ?></p>
 
                     <!--  -->
                     <div class="gestion_admin">
                         <?php 
-                        if (isset($_SESSION['grade'])) {
-                            if ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin') {
+                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
+                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
                                 ?>
                                 <form action='action_database.php' method ='post'>
                                     <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
                                     <input type='hidden' name='provenance' value='supprimer-post'>
                                     <input type='submit' name='bouton-supprimer' value='supprimer'>
                                 </form>
-                                
-                                <form action='action_database.php' method ='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='desepingler-post'>
-                                    <input type='submit' name='bouton-desepingler' value='desepingler'>
-                                </form>
                                 <?php 
-                                } 
+                            }
+                                
+                                if (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin')) {
+                                ?>
+                                    <form action='action_database.php' method ='post'>
+                                        <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
+                                        <input type='hidden' name='provenance' value='desepingler-post'>
+                                        <input type='submit' name='bouton-epingler' value='Désepingler'>
+                                    </form>
+                                <?php 
                             }?>
-                        </div>
+                    
+                        <?php 
+                        if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
+                            if ($_SESSION['id_u'] == $message['id_u']){
+                                ?>
+                                <form action='modifier_message.php' method='post'>
+                                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                                    <input type='hidden' name='message_id_u' value='<?= $message['id_u'] ?>'>
+                                    <input type='hidden' name='ancien_message' value='<?= $message['message'] ?>'>
+                                    <input type='submit' value='Modifier message' >
+                                </form>
+
+                                <?php
+                            }
+                        }
+                                ?>
+                    </div>
                 </div>
-                <form action='message.php' method='get'>
-                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
-                    <input type='submit' value='Répondre' >
-                </form>
+
+                <?php if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){ 
+                    ?>
+                    <form action='message.php' method='get'>
+                        <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                        <input type='submit' value='Répondre - Voir les réponses' >
+                    </form>
+                    <?php 
+                    } else { ?>
+                        <form action='message.php' method='get'>
+                            <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                            <input type='submit' value='Voir les réponses' >
+                        </form>
+                    <?php } ?>
+
             </div>
+
 
             <?php } ?>
 </div>
@@ -107,38 +147,77 @@
                 <div class='message_utilisateur'>
                     <p>
                     <?php
-                    echo $message['message'],"</br>";
+                    echo nl2br($message['message']),"</br>";
                     ?></p>
 
                     <!--  -->
                     <div class="gestion_admin">
                         <?php 
-                        if (isset($_SESSION['grade'])) {
-                            if ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin') {
+                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
+                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
                                 ?>
                                 <form action='action_database.php' method ='post'>
                                     <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
                                     <input type='hidden' name='provenance' value='supprimer-post'>
                                     <input type='submit' name='bouton-supprimer' value='supprimer'>
                                 </form>
-                                
-                                <form action='action_database.php' method ='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='epingler-post'>
-                                    <input type='submit' name='bouton-epingler' value='epingler'>
-                                </form>
                                 <?php 
-                                } 
+                            }
+                                
+                                if (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin')) {
+                                ?>
+                                    <form action='action_database.php' method ='post'>
+                                        <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
+                                        <input type='hidden' name='provenance' value='epingler-post'>
+                                        <input type='submit' name='bouton-epingler' value='epingler'>
+                                    </form>
+                                <?php 
                             }?>
-                        </div>
+
+                    <?php /*
+                    ajouter le bouton modifier ici !
+                    ajouter le bouton modifier ici !
+                    ajouter le bouton modifier ici !
+                    ajouter le bouton modifier ici !
+                    ajouter le bouton modifier ici !
+                    
+                    */ ?>
+
+                    </div>
                 
                 </div>
 
-                
-                <form action='message.php' method='get'>
-                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
-                    <input type='submit' value='Répondre' >
-                </form>
+                <?php 
+                if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
+                    
+                    if ($_SESSION['id_u'] == $message['id_u']){
+                        ?>
+                        <form action='modifier_message.php' method='post'>
+                            <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                            <input type='hidden' name='message_id_u' value='<?= $message['id_u'] ?>'>
+                            <input type='hidden' name='ancien_message' value='<?= $message['message'] ?>'>
+                            <input type='submit' value='Modifier message' >
+                        </form>
+
+                        <?php
+                    }
+                        ?>
+                    <form action='message.php' method='get'>
+                        <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                        <input type='submit' value='Répondre - Voir les réponses' >
+                    </form>
+                <?php 
+                } else { ?>
+                    <form action='message.php' method='get'>
+                        <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                        <input type='submit' value='Voir les réponses' >
+                    </form>
+                <?php } ?>
+
+
+
+
+
                 <!-- adad
                 -->
 

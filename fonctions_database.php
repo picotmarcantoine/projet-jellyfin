@@ -254,6 +254,7 @@ Class Interraction_bdd {
         $message_secure = htmlspecialchars($message, ENT_SUBSTITUTE ) ;
         ///Test si le code fonctionne avant d'envoyer le message dans la BDD
         ///sinon renvoie une erreur
+        
         try {
             $this->mysqlClient->beginTransaction();
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Message_utilisateur(id_u, message) VALUES (:id_u, :message)') ;
@@ -268,10 +269,27 @@ Class Interraction_bdd {
         return ;
     }
 
+    public function modifier_message($id_post, $nouveau_message){
+        $message_secure = htmlspecialchars($nouveau_message, ENT_SUBSTITUTE ) ;
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('UPDATE Message_utilisateur SET message  = :message 
+            WHERE id_post = :id_post') ;
+            $requete_sql->execute([':message'=>$message_secure, ':id_post' => $id_post ]) ;
+            $this->mysqlClient->commit();
+            echo 'Votre message est modifié ' . $_SESSION['pseudo'] . ' !' ;
+        } catch (Exception $e) {
+            $this->mysqlClient->rollBack();
+            echo "Impossible de modifier le message" ;
+            print_r($e) ;
+        }
+        return ;
+    }
+
     public function repondre_message($id_base_message, $reponse_utilisateur){
+        $message_secure = htmlspecialchars($reponse_utilisateur, ENT_SUBSTITUTE ) ;
         try {
             $this->mysqlClient->beginTransaction() ;
-            $message_secure = htmlspecialchars($reponse_utilisateur, ENT_SUBSTITUTE ) ;
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Reponse_message(id_post, id_u, message) 
             VALUES(:id_base_message, :id_u, :reponse_utilisateur)') ;
             $requete_sql->execute([':id_base_message' => $id_base_message, ':id_u' => $_SESSION['id_u'], ':reponse_utilisateur' => $message_secure]) ;
@@ -285,7 +303,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
 
     public function epingler_message($id_post){
         try {
@@ -318,8 +335,30 @@ Class Interraction_bdd {
 
 
     public function supprimer_message($id_post){
-        $requete_sql = $this->mysqlClient->prepare('DELETE FROM Message_utilisateur WHERE id_post = :id_post') ;
-        $requete_sql->execute([':id_post'=> $id_post]) ;
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('DELETE FROM Message_utilisateur WHERE id_post = :id_post') ;
+            $requete_sql->execute([':id_post'=> $id_post]) ;
+            $this->mysqlClient->commit() ;
+        } catch(Exception $e){
+            $this->mysqlClient->rollBack();
+            echo "Impossible d'e supprimer la réponse !";
+            print_r($e); 
+        }
+        return ;
+    }
+
+        public function supprimer_reponse($id_reponse){
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('DELETE FROM Reponse_message WHERE id_reponse = :id_reponse') ;
+            $requete_sql->execute([':id_reponse' => $id_reponse]);
+            $this->mysqlClient->commit() ;
+        } catch(Exception $e){
+            $this->mysqlClient->rollBack();
+            echo "Impossible d'e supprimer la réponse !";
+            print_r($e); 
+        }
         return ;
     }
 

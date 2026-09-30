@@ -63,28 +63,41 @@ require_once('action_database.php');
                 <div class='message_utilisateur'>
                     <p>
                     <?php
-                    echo $message['message'],"</br>";
+                    echo nl2br($message['message']),"</br>";
                     ?></p>
+
+
+
 
                     <!--  -->
                     <div class="gestion_admin">
+
+                    <?php 
+                        if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
+                            if ($_SESSION['id_u'] == $message['id_u']){
+                                ?>
+                                <form action='modifier_message.php' method='post'>
+                                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
+                                    <input type='hidden' name='message_id_u' value='<?= $message['id_u'] ?>'>
+                                    <input type='hidden' name='ancien_message' value='<?= $message['message'] ?>'>
+                                    <input type='submit' value='Modifier message' >
+                                </form>
+
+                                <?php
+                            }
+                        }
+                        ?>
+
                         <?php 
-                        if (isset($_SESSION['grade'])) {
-                            if ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin') {
+                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
+                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
                                 ?>
                                 <form action='action_database.php' method ='post'>
                                     <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
                                     <input type='hidden' name='provenance' value='supprimer-post'>
                                     <input type='submit' name='bouton-supprimer' value='supprimer'>
                                 </form>
-                                
-                                <form action='action_database.php' method ='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='epingler-post'>
-                                    <input type='submit' name='bouton-epingler' value='epingler'>
-                                </form>
                                 <?php 
-                                } 
                             }?>
                     </div>
                 </div>
@@ -95,21 +108,26 @@ require_once('action_database.php');
             echo "Il y a eu une erreur" ;
         }
         ?>
-    
-        <div name='champ_reponse_utilisateur'> 
-            <form method='post' action=''>
-                <input type='hidden' name='provenance' value='envoyer_reponse'>
-                <input type='hidden' name='post_base' value='<?=$_GET['id_post']?>'>
-                <textarea name='reponse_utilisateur' placeholder="Vous pouvez ecrire une reponse à l'utilisateur '<?= $username ?>'" class='champ_reponse_utilisateur'></textarea>
-                <input type ='submit' class='submit_post'>
-            </form>
-            <?php include('action_database.php'); ?>
-        </div>
+
+        <?php 
+        if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
+            ?>
+            <div class='champ_reponse_utilisateur'> 
+                <form method='post' action=''>
+                    <input type='hidden' name='provenance' value='envoyer_reponse'>
+                    <input type='hidden' name='post_base' value='<?=$_GET['id_post']?>'>
+                    <textarea name='reponse_utilisateur' placeholder="Vous pouvez ecrire une reponse à l'utilisateur '<?= $username ?>'" class='champ_reponse_utilisateur'></textarea>
+                    <input type ='submit' class='submit_post'>
+                </form>
+                <?php include('action_database.php'); ?>
+            </div>
+            <?php 
+            }?>
 
 
 
 
-        <div name='reponses_utilisateurs'>
+        <div class='post_reponses_utilisateurs'>
             
             <?php 
             $messages_reponses = new Interraction_bdd() ;
@@ -133,12 +151,14 @@ require_once('action_database.php');
                 <div class='reponses_utilisateurs'>
                     <p>
                     <?php
-                    echo $message['message'],"</br>";
+                    echo nl2br($message['message']),"</br>";
                     ?></p>
+
+
                     <div class="gestion_admin">
                         <?php 
-                        if (isset($_SESSION['grade'])) {
-                            if ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin') {
+                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
+                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
                                 ?>
                                 <form action='action_database.php' method ='post'>
                                     <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
@@ -146,8 +166,9 @@ require_once('action_database.php');
                                     <input type='submit' name='bouton-supprimer' value='supprimer'>
                                 </form>
                                 <?php 
-                                } 
-                            }?>
+                            }
+                                
+                            ?>
                     </div>
                 </div>
             </div>

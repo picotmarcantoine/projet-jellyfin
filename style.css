@@ -440,7 +440,7 @@ textarea {
 .replies-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
 }
 
 
@@ -449,23 +449,17 @@ textarea {
    ========================================================= */
 
 .post {
-    border: 1px solid #e4e4e4;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
-
-    background: #ffffff;
-
+    background: #fff;
     overflow: hidden;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 .post:hover {
-    border-color: #d6d6d6;
-
-    box-shadow:
-        0 3px 12px rgba(0, 0, 0, 0.04);
+    border-color: #d2d2d2;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
 }
 
 .post-pinned {
@@ -525,12 +519,11 @@ textarea {
    ========================================================= */
 
 .post-content {
-    padding: 22px 20px;
-
-    min-height: 80px;
-
-    color: #333333;
-
+    padding: 18px 20px;
+    min-height: 65px;
+    color: #333;
+    font-size: 1.05rem;
+    line-height: 1.55;
     white-space: normal;
     overflow-wrap: anywhere;
 }
@@ -650,12 +643,11 @@ textarea {
 }
 
 .reply {
-    border: 1px solid #e8e8e8;
+    border: 1px solid #e2e2e2;
     border-radius: 10px;
-
     background: #fafafa;
-
     overflow: hidden;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
 }
 
 .reply-content {

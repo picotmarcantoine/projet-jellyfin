@@ -1,99 +1,776 @@
-header{
-    margin-bottom : 5vw ;
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-body{
-    background-color: #EEEEEE ;
+html {
+    font-size: 16px;
 }
 
-.message_epingle{
-    display : grid ;
-    grid-template-columns: auto ;
-    grid-template-rows: auto ;
-    margin : 3vw ;
-    margin-bottom: 1vw  ;
-
+body {
+    margin: 0;
+    background: #ffffff;
+    color: #222222;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
 }
 
-.post_epingle{
-    border : 2px grey solid ;
-    background-color: rgb(39, 39, 39);
-    color : #FFF ;
-    margin : 5px ;
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
-.corps_page {
-    display : grid ;
-    grid-template-columns: auto ;
-    grid-template-rows: auto ;
-    margin : 5vw ;
-    margin-top: 1vw ;
+button,
+input,
+textarea {
+    font: inherit;
 }
 
-.bouton-post{
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header {
+    width: 100%;
+    border-bottom: 1px solid #e8e8e8;
+    background: #ffffff;
+}
+
+.header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: 72px;
+    padding: 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.site-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #222222;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-link {
+    padding: 10px 14px;
+    color: #555555;
+    border-radius: 8px;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.nav-link:hover {
+    background: #f5f5f5;
+    color: #222222;
+}
+
+.nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+    padding: 0 20px;
+
+    border-radius: 8px;
+
+    background: #222222;
+    color: #ffffff;
+
+    transition:
+        background-color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.nav-button:hover {
+    background: #000000;
+    transform: translateY(-1px);
+}
+
+.nav-button.secondary {
+    background: #f2f2f2;
+    color: #333333;
+}
+
+.nav-button.secondary:hover {
+    background: #e8e8e8;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.page-container {
+    width: min(100% - 40px, 1000px);
+    margin: 0 auto;
+    padding: 55px 0 80px;
+}
+
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.button {
+    min-height: 46px;
+    padding: 0 24px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 600;
+
+    transition:
+        background-color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.button-primary {
+    background: #222222;
+    color: #ffffff;
+}
+
+.button-primary:hover {
+    background: #000000;
+    transform: translateY(-1px);
+}
+
+.button-secondary {
+    background: #f2f2f2;
+    color: #333333;
+}
+
+.button-secondary:hover {
+    background: #e7e7e7;
+}
+
+
+/* =========================================================
+   FORMULAIRES
+   ========================================================= */
+
+.form-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 30px;
+}
+
+.form-header h1 {
+    margin: 0 0 12px;
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.form-header p {
+    margin: 5px 0;
+    color: #666666;
+}
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.text-area {
+    width: 100%;
+    min-height: 350px;
+
+    padding: 18px;
+
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #222222;
+
+    resize: vertical;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.text-area:focus {
+    border-color: #999999;
+    box-shadow: 0 0 0 3px #f0f0f0;
+}
+
+.text-area::placeholder {
+    color: #999999;
+}
+
+.post-form .button {
+    align-self: flex-start;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 25px;
+
+    color: #666666;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    color: #222222;
+}
+
+
+/* =========================================================
+   AUTHENTIFICATION
+   ========================================================= */
+
+.auth-page {
+    width: min(100%, 450px);
+    margin: 30px auto 0;
+}
+
+.auth-header {
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    margin: 0 0 10px;
+    font-size: 2rem;
+}
+
+.auth-header p {
+    margin: 0;
+    color: #666666;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    padding: 30px;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-field input {
+    width: 100%;
+    height: 46px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.form-field input:focus {
+    border-color: #999999;
+    box-shadow: 0 0 0 3px #f0f0f0;
+}
+
+.auth-form .button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.auth-footer {
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: #666666;
+    font-size: 0.95rem;
+}
+
+.auth-footer a {
+    color: #222222;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .header-inner {
+        min-height: 64px;
+        padding: 0 16px;
+    }
+
+    .site-logo {
+        font-size: 1.1rem;
+    }
+
+    .site-nav {
+        gap: 4px;
+    }
+
+    .nav-link {
+        display: none;
+    }
+
+    .nav-button {
+        min-height: 40px;
+        padding: 0 14px;
+        font-size: 0.9rem;
+    }
+
+    .page-container {
+        width: min(100% - 28px, 1000px);
+        padding: 35px 0 60px;
+    }
+
+    .form-header h1,
+    .auth-header h1 {
+        font-size: 1.65rem;
+    }
+
+    .text-area {
+        min-height: 280px;
+    }
+
+    .post-form .button {
+        width: 100%;
+    }
+
+    .auth-form {
+        padding: 22px;
+    }
+}
+
+
+/* =========================================================
+   FORUM
+   ========================================================= */
+
+.forum-container {
+    width: min(100% - 40px, 1000px);
+    margin: 0 auto;
+    padding: 45px 0 80px;
+}
+
+.new-post-container {
+    width: min(100% - 40px, 1000px);
+    margin: 35px auto 0;
+
     display: flex;
     justify-content: flex-end;
 }
 
-a.bouton-creer-post {
-    margin-right : 3vw ;
-    margin-top: 1vw ;
-    display : inline-flex ;
-    justify-content: end ;
-    height : 40px ;
-    width : auto ;
-    
+.forum-section {
+    margin-top: 50px;
 }
 
-a.bouton-creer-post input {
-    background-color: cyan ;
+.section-header {
+    margin-bottom: 22px;
 }
 
+.section-header h1,
+.section-header h2 {
+    margin: 0 0 5px;
 
-.post{
-    border : 2px grey solid ;
-    background-color: #B1B1B1;
-    margin : 1vw ;
+    color: #222222;
 }
 
-.en-tete-message{
-    background-color: #000000;
-    display : grid ;
-    grid-template-columns: 50% 50% ;
-    margin-bottom : 15px ;
-    color : #eee ;
+.section-header h1 {
+    font-size: 1.6rem;
 }
 
-.pseudo_utilisateur{
-    font-weight: bold ;
-    font-size: 130% ;
+.section-header h2 {
+    font-size: 1.35rem;
 }
 
-.date_post {
-    text-align : end;
+.section-header p {
+    margin: 0;
+
+    color: #777777;
 }
 
-.message_utilisateur{
-    margin-bottom: 10px ;
-    display: grid ;
-    grid-template-columns: 90% 10% ;
-}
-
-.message_utilisateur p {
-    display : flex ;
-}
-
-.gestion_admin {
-    display : grid ;
-    grid-template-rows: 50% 50%;
-    width : 100% ;
-    height : 100% ;
-}
-
-.gestion_admin input {
-    width : 95% ;
-    height : 100% ;
+.posts-list,
+.replies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 
+/* =========================================================
+   POSTS
+   ========================================================= */
 
+.post {
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.post:hover {
+    border-color: #d6d6d6;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+.post-pinned {
+    border-left: 4px solid #222222;
+}
+
+
+/* =========================================================
+   POST HEADER
+   ========================================================= */
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.post-author {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.pseudo_utilisateur {
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    color: #222222;
+
+    overflow-wrap: anywhere;
+}
+
+.post-pin {
+    font-size: 0.9rem;
+}
+
+.post-date {
+    flex-shrink: 0;
+
+    color: #888888;
+
+    font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   POST CONTENT
+   ========================================================= */
+
+.post-content {
+    padding: 22px 20px;
+
+    min-height: 80px;
+
+    color: #333333;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   POST FOOTER
+   ========================================================= */
+
+.post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 12px 20px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+.post-management {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+.post-management form {
+    margin: 0;
+}
+
+.post-replies-form {
+    margin: 0;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.post-action {
+    border: none;
+
+    background: transparent;
+
+    color: #777777;
+
+    padding: 7px 10px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-size: 0.85rem;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.post-action:hover {
+    background: #f3f3f3;
+    color: #222222;
+}
+
+.post-action-danger:hover {
+    background: #fff0f0;
+    color: #c0392b;
+}
+
+
+/* =========================================================
+   SINGLE POST
+   ========================================================= */
+
+.single-post {
+    margin-top: 30px;
+
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+.single-post-content {
+    padding: 30px 25px;
+
+    min-height: 150px;
+
+    color: #333333;
+
+    overflow-wrap: anywhere;
+}
+
+.single-post > .post-management {
+    padding: 12px 20px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* =========================================================
+   REPONSES
+   ========================================================= */
+
+.reply-section {
+    margin-top: 55px;
+}
+
+.replies-section {
+    margin-top: 55px;
+}
+
+.reply {
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+
+    background: #fafafa;
+
+    overflow: hidden;
+}
+
+.reply-content {
+    padding: 20px;
+
+    color: #444444;
+
+    overflow-wrap: anywhere;
+}
+
+.reply > .post-management {
+    padding: 10px 20px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* =========================================================
+   FORMULAIRE DE REPONSE
+   ========================================================= */
+
+.reply-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.reply-text-area {
+    min-height: 180px;
+}
+
+.reply-form .button {
+    align-self: flex-end;
+}
+
+
+/* =========================================================
+   RESPONSIVE FORUM
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .forum-container {
+        width: min(100% - 28px, 1000px);
+
+        padding-top: 25px;
+    }
+
+    .new-post-container {
+        width: min(100% - 28px, 1000px);
+
+        margin-top: 20px;
+    }
+
+    .new-post-container .button {
+        width: 100%;
+    }
+
+    .forum-section {
+        margin-top: 35px;
+    }
+
+    .post-header {
+        align-items: flex-start;
+
+        padding: 14px 15px;
+
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+    .post-date {
+        font-size: 0.8rem;
+    }
+
+    .post-content {
+        padding: 18px 15px;
+    }
+
+    .post-footer {
+        align-items: stretch;
+
+        flex-direction: column;
+
+        padding: 12px 15px;
+    }
+
+    .post-management {
+        order: 2;
+    }
+
+    .post-replies-form {
+        order: 1;
+    }
+
+    .post-replies-form .button {
+        width: 100%;
+    }
+
+    .single-post-content {
+        padding: 22px 16px;
+    }
+
+    .single-post > .post-management {
+        padding: 10px 15px;
+    }
+
+    .reply-content {
+        padding: 18px 15px;
+    }
+
+    .reply-form .button {
+        width: 100%;
+    }
+
+}

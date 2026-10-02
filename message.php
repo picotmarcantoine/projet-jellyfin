@@ -1,187 +1,409 @@
 <?php
-session_start() ;
-$id_session = session_id() ;
+session_start();
 
+$id_session = session_id();
 
 require_once('config/databaseconnect.php');
 require_once('fonctions_database.php');
 require_once('action_database.php');
+?>
 
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <title>Discussion - Suivi Jellyfin</title>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <?php include('header.php'); ?>
+
+</header>
+
+
+<main class="page-container">
+
+
+<?php
+
+if (isset($_GET['id_post']) && !empty($_GET['id_post'])) {
+
+    $message_infos = new Interraction_bdd();
+
+    $message = $message_infos->lire_message_id($_GET['id_post']);
+
+    $username = $message_infos->get_username($message['id_u']);
 
 ?>
 
+    <a href="index.php" class="back-link">
+        ← Retour aux discussions
+    </a>
 
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="style_reponses.css">
-    </head>
+    <!-- =====================================================
+         MESSAGE PRINCIPAL
+         ===================================================== -->
 
-    <body>
+    <article class="single-post">
 
-        <header>
+        <div class="post-header">
+
+            <div class="post-author">
+
+                <span class="pseudo_utilisateur">
+
+                    <?php
+                    if (!isset($username) || empty($username)) {
+                        echo "CET UTILISATEUR N'EXISTE PLUS";
+                    } else {
+                        echo htmlspecialchars($username);
+                    }
+                    ?>
+
+                </span>
+
+            </div>
+
+            <time class="post-date">
+                <?= htmlspecialchars($message['date_message']); ?>
+            </time>
+
+        </div>
+
+
+        <div class="single-post-content">
+
+            <?= nl2br(htmlspecialchars($message['message'])); ?>
+
+        </div>
+
+
+        <div class="post-management">
+
             <?php
-            include('header.php');
+            if (
+                isset($_SESSION['is_utilisateur_connecte'])
+                && $_SESSION['is_utilisateur_connecte'] === True
+                && $_SESSION['id_u'] == $message['id_u']
+            ) {
             ?>
-        </header>
 
+                <form
+                    action="modifier_message.php"
+                    method="post"
+                >
 
+                    <input
+                        type="hidden"
+                        name="id_post"
+                        value="<?= $message['id_post']; ?>"
+                    >
 
-        <?php
-        if (isset($_GET['id_post']) and !empty($_GET['id_post'])){
+                    <input
+                        type="hidden"
+                        name="message_id_u"
+                        value="<?= $message['id_u']; ?>"
+                    >
 
-            $message_infos = new Interraction_bdd() ;
-            $message = $message_infos->lire_message_id($_GET['id_post']);
-            $username = $message_infos->get_username($message['id_u']);
-            ?>
-            
-            <div class="post">
-                <div class='en-tete-message'>
-                    <div class="pseudo_utilisateur">
-                        <?php 
-                        if (!isset($username) or empty($username)){
-                            echo 'CET UTILISATEUR N\'EXISTE PLUS' ;
-                        } else {
-                            echo $username;
-                        }
-                        ?>
-                    </div>
+                    <input
+                        type="hidden"
+                        name="ancien_message"
+                        value="<?= htmlspecialchars($message['message']); ?>"
+                    >
 
-                    <div class="date_post">
-                        <?php 
-                            ///utilisation de la fonction date sur le resultat de la requete SQL puisque la table enregistre des timestamp
-                            ///la fonction sert a convertir ce timestamp en date 
-                            ///elle prend en argument le format de la date souhaité puis le timestamp a convertir (optionnel)
-                            echo $message['date_message'] ; 
-                        ?>
-                    </div>
-                </div>
-                
-                <div class='message_utilisateur'>
-                    <p>
-                    <?php
-                    echo nl2br($message['message']),"</br>";
-                    ?></p>
+                    <button
+                        type="submit"
+                        class="post-action"
+                    >
+                        Modifier
+                    </button>
 
-
-
-
-                    <!--  -->
-                    <div class="gestion_admin">
-
-                    <?php 
-                        if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
-                            if ($_SESSION['id_u'] == $message['id_u']){
-                                ?>
-                                <form action='modifier_message.php' method='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post']?>'>
-                                    <input type='hidden' name='message_id_u' value='<?= $message['id_u'] ?>'>
-                                    <input type='hidden' name='ancien_message' value='<?= $message['message'] ?>'>
-                                    <input type='submit' value='Modifier message' >
-                                </form>
-
-                                <?php
-                            }
-                        }
-                        ?>
-
-                        <?php 
-                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
-                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
-                                ?>
-                                <form action='action_database.php' method ='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='supprimer-post'>
-                                    <input type='submit' name='bouton-supprimer' value='supprimer'>
-                                </form>
-                                <?php 
-                            }?>
-                    </div>
-                </div>
-            </div>
-
-        <?php
-        }else{
-            echo "Il y a eu une erreur" ;
-        }
-        ?>
-
-        <?php 
-        if (isset($_SESSION['is_utilisateur_connecte']) AND $_SESSION['is_utilisateur_connecte'] === True ){
-            ?>
-            <div class='champ_reponse_utilisateur'> 
-                <form method='post' action=''>
-                    <input type='hidden' name='provenance' value='envoyer_reponse'>
-                    <input type='hidden' name='post_base' value='<?=$_GET['id_post']?>'>
-                    <textarea name='reponse_utilisateur' placeholder="Vous pouvez ecrire une reponse à l'utilisateur '<?= $username ?>'" class='champ_reponse_utilisateur'></textarea>
-                    <input type ='submit' class='submit_post'>
                 </form>
-                <?php include('action_database.php'); ?>
-            </div>
-            <?php 
-            }?>
+
+            <?php
+            }
 
 
-
-
-        <div class='post_reponses_utilisateurs'>
-            
-            <?php 
-            $messages_reponses = new Interraction_bdd() ;
-            $reponses = $messages_reponses->lire_reponses($_GET['id_post']) ;
-
-
-            foreach ($reponses as $message){
-                $pseudo = $messages_reponses->get_username($message['id_u']);
+            if (
+                (
+                    isset($_SESSION['grade'])
+                    && (
+                        $_SESSION['grade'] === 'admin'
+                        || $_SESSION['grade'] === 'super_admin'
+                    )
+                )
+                ||
+                (
+                    isset($_SESSION['id_u'])
+                    && $_SESSION['id_u'] == $message['id_u']
+                )
+            ) {
             ?>
-            <div class='reponses'>
-                <div class='en-tete_reponses'>
-                    <div class='pseudo_utilisateur'>
-                        <?php 
-                        echo $pseudo ;
-                        ?>
-                    </div>
-                    <div class='date_post'>
-                        <?= $message['date_reponse'] ; ?>
-                    </div>
-                </div>
-                <div class='reponses_utilisateurs'>
-                    <p>
-                    <?php
-                    echo nl2br($message['message']),"</br>";
-                    ?></p>
 
+                <form
+                    action="action_database.php"
+                    method="post"
+                >
 
-                    <div class="gestion_admin">
-                        <?php 
-                        if ( (isset($_SESSION['grade']) AND ($_SESSION['grade'] === 'admin' or $_SESSION['grade'] === 'super_admin'))
-                            OR (isset($_SESSION['id_u']) AND $_SESSION['id_u'] == $message['id_u'] )) {
-                                ?>
-                                <form action='action_database.php' method ='post'>
-                                    <input type='hidden' name='id_post' value='<?= $message['id_post'];?>' >
-                                    <input type='hidden' name='provenance' value='supprimer-post'>
-                                    <input type='submit' name='bouton-supprimer' value='supprimer'>
-                                </form>
-                                <?php 
-                            }
-                                
-                            ?>
-                    </div>
-                </div>
-            </div>
+                    <input
+                        type="hidden"
+                        name="id_post"
+                        value="<?= $message['id_post']; ?>"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="provenance"
+                        value="supprimer-post"
+                    >
+
+                    <button
+                        type="submit"
+                        name="bouton-supprimer"
+                        value="supprimer"
+                        class="post-action post-action-danger"
+                    >
+                        Supprimer
+                    </button>
+
+                </form>
+
             <?php
             }
             ?>
 
         </div>
-        
-        
-        <footer>
-        </footer>
 
-    </body>
+    </article>
+
+
+    <!-- =====================================================
+         REPONSE
+         ===================================================== -->
+
+    <?php
+    if (
+        isset($_SESSION['is_utilisateur_connecte'])
+        && $_SESSION['is_utilisateur_connecte'] === True
+    ) {
+    ?>
+
+        <section class="reply-section">
+
+            <div class="section-header">
+
+                <h2>Répondre</h2>
+
+                <p>
+                    Votre réponse sera visible par les autres utilisateurs.
+                </p>
+
+            </div>
+
+
+            <form
+                method="post"
+                action=""
+                class="reply-form"
+            >
+
+                <input
+                    type="hidden"
+                    name="provenance"
+                    value="envoyer_reponse"
+                >
+
+                <input
+                    type="hidden"
+                    name="post_base"
+                    value="<?= $_GET['id_post']; ?>"
+                >
+
+                <textarea
+                    name="reponse_utilisateur"
+                    placeholder="Écrivez votre réponse..."
+                    class="text-area reply-text-area"
+                    required
+                ></textarea>
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Répondre
+                </button>
+
+            </form>
+
+            <?php include('action_database.php'); ?>
+
+        </section>
+
+    <?php
+    }
+    ?>
+
+
+    <!-- =====================================================
+         REPONSES
+         ===================================================== -->
+
+    <section class="replies-section">
+
+        <?php
+
+        $messages_reponses = new Interraction_bdd();
+
+        $reponses = $messages_reponses->lire_reponses($_GET['id_post']);
+
+        ?>
+
+        <div class="section-header">
+
+            <h2>
+                Réponses
+            </h2>
+
+        </div>
+
+
+        <div class="replies-list">
+
+            <?php
+            foreach ($reponses as $message) {
+
+                $pseudo = $messages_reponses->get_username($message['id_u']);
+            ?>
+
+                <article class="reply">
+
+                    <div class="post-header">
+
+                        <div class="post-author">
+
+                            <span class="pseudo_utilisateur">
+
+                                <?php
+                                if (!isset($pseudo) || empty($pseudo)) {
+                                    echo "CET UTILISATEUR N'EXISTE PLUS";
+                                } else {
+                                    echo htmlspecialchars($pseudo);
+                                }
+                                ?>
+
+                            </span>
+
+                        </div>
+
+                        <time class="post-date">
+
+                            <?= htmlspecialchars($message['date_reponse']); ?>
+
+                        </time>
+
+                    </div>
+
+
+                    <div class="reply-content">
+
+                        <?= nl2br(htmlspecialchars($message['message'])); ?>
+
+                    </div>
+
+
+                    <div class="post-management">
+
+                        <?php
+                        if (
+                            (
+                                isset($_SESSION['grade'])
+                                && (
+                                    $_SESSION['grade'] === 'admin'
+                                    || $_SESSION['grade'] === 'super_admin'
+                                )
+                            )
+                            ||
+                            (
+                                isset($_SESSION['id_u'])
+                                && $_SESSION['id_u'] == $message['id_u']
+                            )
+                        ) {
+                        ?>
+
+                            <form
+                                action="action_database.php"
+                                method="post"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="id_post"
+                                    value="<?= $message['id_post']; ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="provenance"
+                                    value="supprimer-reponse"
+                                >
+
+                                <button
+                                    type="submit"
+                                    name="bouton-supprimer"
+                                    value="supprimer"
+                                    class="post-action post-action-danger"
+                                >
+                                    Supprimer
+                                </button>
+
+                            </form>
+
+                        <?php
+                        }
+                        ?>
+
+                    </div>
+
+                </article>
+
+            <?php
+            }
+            ?>
+
+        </div>
+
+    </section>
+
+<?php
+
+} else {
+
+    echo "Il y a eu une erreur";
+
+}
+
+?>
+
+</main>
+
+
+<footer></footer>
+
+</body>
 
 </html>

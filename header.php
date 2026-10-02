@@ -1,55 +1,60 @@
+<div class="site-header">
+    <div class="header-inner">
 
-<head>
-    <link rel="stylesheet" href="style_header.css">
-</head>
+        <a href="index.php" class="site-logo">
+            Suivi Jellyfin
+        </a>
 
-<a href='index.php' class='bouton_home'> <h3>Home</h3> </a>
+        <nav class="site-nav">
 
-<p class="etat_site"> <?php 
-echo "etat du site" ; ?> </p>
-
-<?php
-if (isset($_SESSION['is_utilisateur_connecte']) and $_SESSION['is_utilisateur_connecte'] === true){ ?>
-    <form>
-        <ul>
-            <?php 
-                if (isset($_SESSION['grade']) AND $_SESSION['grade'] === 'admin' OR $_SESSION['grade'] === 'super_admin'){ ?>
-                    <li> 
-                        <a href='page_moderation.php'>
-                            <input type='button' name='moderation' value ='Moderation' class='bouton-connexion'>
-                        </a>   
-                    </li>
+            <a href="index.php" class="nav-link">
+                Accueil
+            </a>
 
             <?php
-                }
+            if (
+                isset($_SESSION['is_utilisateur_connecte'])
+                && $_SESSION['is_utilisateur_connecte'] === true
+            ) {
             ?>
 
-        <li>
-            <a href='deconnexion.php'>
-                <input type='button' name='deconnexion' value ='Deconnexion' class='bouton-connexion'>
-            </a>   
-        </li>
-        </ul>
-    </form>
-<?php
-}
+                <?php
+                if (
+                    isset($_SESSION['grade'])
+                    && (
+                        $_SESSION['grade'] === 'admin'
+                        || $_SESSION['grade'] === 'super_admin'
+                    )
+                ) {
+                ?>
+                    <a href="page_moderation.php" class="nav-link">
+                        Modération
+                    </a>
+                <?php
+                }
+                ?>
 
-if (!isset($_SESSION['is_utilisateur_connecte']) or $_SESSION['is_utilisateur_connecte'] == false) { ?>
-    <form>    
-        <ul><li>
-            <a href='inscription.php'> 
-                <input type="button" name="inscription_utilisateur"  value="Inscription" class='bouton-connexion'> 
-            </a>
-        </li>
+                <a href="deconnexion.php" class="nav-button secondary">
+                    Déconnexion
+                </a>
 
-        <li> 
-            <a href='connexion.php'> 
-                <input type="button" name="connexion_utilisateur" value="Connexion" class='bouton-connexion'>
-            </a>
-        </li>
-        </ul>
-    </form>
-<?php 
-}
-?>
+            <?php
+            } else {
+            ?>
 
+                <a href="inscription.php" class="nav-link">
+                    Inscription
+                </a>
+
+                <a href="connexion.php" class="nav-button">
+                    Connexion
+                </a>
+
+            <?php
+            }
+            ?>
+
+        </nav>
+
+    </div>
+</div>

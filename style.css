@@ -3,7 +3,7 @@ header{
 }
 
 body{
-    background-color: #466e69;
+    background-color: #EEEEEE ;
 }
 
 .message_epingle{
@@ -17,8 +17,8 @@ body{
 
 .post_epingle{
     border : 2px grey solid ;
-    background-color: rgb(8, 8, 8);
-    color : #EEE ;
+    background-color: rgb(39, 39, 39);
+    color : #FFF ;
     margin : 5px ;
 }
 

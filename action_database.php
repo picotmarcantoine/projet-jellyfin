@@ -89,7 +89,7 @@ if (isset($_POST['provenance'])){
     }
     if ($_POST['provenance'] == 'supprimer-reponse'){
         $action_message->supprimer_reponse($_POST['id_reponse']);
-        $url = "message.php?id_post=" . $_POST['post_base'] ;
+        $url = "message.php?id_post=" . $_POST['id_post_base'] ;
         header('Location:' . $url ) ;
         exit();
     }

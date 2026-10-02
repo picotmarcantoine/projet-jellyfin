@@ -356,7 +356,7 @@ Class Interraction_bdd {
             $this->mysqlClient->commit() ;
         } catch(Exception $e){
             $this->mysqlClient->rollBack();
-            echo "Impossible d'e supprimer la réponse !";
+            echo "Impossible de supprimer la réponse !";
             print_r($e); 
         }
         return ;

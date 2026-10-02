@@ -212,7 +212,7 @@ if (
                                 && $_SESSION['is_utilisateur_connecte'] === True && $_SESSION['id_u'] == $message['id_u']) {
                             ?>
 
-                                <form action="modifier_message.php method="post">
+                                <form action="modifier_message.php" method="post">
 
                                     <input type="hidden" name="id_post" value="<?= $message['id_post']; ?>">
 

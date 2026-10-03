@@ -362,6 +362,45 @@ Class Interraction_bdd {
         return ;
     }
 
+    public function nouvelle_notif(){
+        ///Sert a selectionner les post non lus par l'utilisateur, pour les afficher sur la page Notif
+        ///Les posts qui doivent laisser une notif
+        // donc NON LUS ne sont pas entrés dans la table Notifications
+        
+        /*
+        Je selectionne les champs de la table Message_utilisateur
+        Que je joins avec la table Utilisateur
+        Et je joins la ou il n'y a pas de correspondances(outer join) la table notifications
+        La ou il n' y a pas dentree Notifications(id_post et id_u) IS NULL
+        Et pour l'utilisateur actuel (Utilisateur.id_u = $Session['id_u'])
+        */
+        $requete_sql = $this->mysqlClient->prepare('SELECT Message_utilisateur.id_post, Message_utilisateur.id_u, 
+        Message_utilisateur.message, Message_utilisateur.date_message FROM Message_utilisateur 
+        INNER JOIN Utilisateur ON Utilisateur.id_u = Utilisateur.id_u
+        LEFT OUTER JOIN Notifications ON Notifications.id_post = Message_utilisateur.id_post
+        WHERE Notifications.id_u IS NULL AND Notifications.id_post IS NULL AND Utilisateur.id_u = :id_u');
+
+        $requete_sql->execute([':id_u' => $_SESSION['id_u']]);
+        $resultat_requete = $requete_sql->fetchAll();
+        return $resultat_requete ;
+    }
+
+    public function lire_notif($id_post){
+        ///faire une boucle foreach et rentrer l'id du post en argument
+        try {
+            $this->mysqlClient->beginTransaction();
+            $requete_sql = $this->mysqlClient->prepare('INSERT INTO Notifications(id_u, id_post, est_lu) 
+            Values(:id_u, :id_post, True)');
+            $requete_sql->execute([':id_u' => $_SESSION['id_u'], ':id_post' => $id_post]);
+            $this->mysqlClient->commit();
+        } catch (Exception $e){
+            $this->mysqlClient->rollBack();
+            echo 'Impossible de lire la notification';
+            print_r($e) ;
+        }
+        return;
+    }
+
     /* fin de classe !
     fin de classe !
     fin de classe ! */

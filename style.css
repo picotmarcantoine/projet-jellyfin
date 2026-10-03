@@ -150,6 +150,7 @@ textarea {
 .button-primary {
     background: #222222;
     color: #ffffff;
+    margin-left : 1% ;
 }
 
 .button-primary:hover {

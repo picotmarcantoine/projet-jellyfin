@@ -12,20 +12,10 @@
             </a>
 
             <?php
-            if (
-                isset($_SESSION['is_utilisateur_connecte'])
-                && $_SESSION['is_utilisateur_connecte'] === true
-            ) {
+            if (isset($_SESSION['is_utilisateur_connecte']) && $_SESSION['is_utilisateur_connecte'] === true) {
             ?>
-
                 <?php
-                if (
-                    isset($_SESSION['grade'])
-                    && (
-                        $_SESSION['grade'] === 'admin'
-                        || $_SESSION['grade'] === 'super_admin'
-                    )
-                ) {
+                if (isset($_SESSION['grade'])&& ($_SESSION['grade'] === 'admin'|| $_SESSION['grade'] === 'super_admin')) {
                 ?>
                     <a href="page_moderation.php" class="nav-link">
                         Modération

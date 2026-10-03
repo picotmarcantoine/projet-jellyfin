@@ -1,10 +1,22 @@
 <?php 
-if (
-    isset($_SESSION['is_utilisateur_connecte'])
-    && $_SESSION['is_utilisateur_connecte'] === True
-) {
+if (isset($_SESSION['is_utilisateur_connecte'])
+    && $_SESSION['is_utilisateur_connecte'] === True) {
 ?>
     <div class="new-post-container">
+
+        <button onclick="ouvrirPopup()" class="button button-primary"> Notifications </button>  
+            <script>
+                function ouvrirPopup() {
+                    document.getElementById('notifications').showModal();
+                }  
+            </script>
+
+            <dialog id='notifications'> 
+                <p> <?php include('notifs.php') ?> </p> 
+                <button class="button button-primary" onclick="document.getElementById('notifications').close()">X</button>
+            </dialog>
+
+
         <a href="creer_post.php" class="button button-primary">
             + Nouveau message
         </a>

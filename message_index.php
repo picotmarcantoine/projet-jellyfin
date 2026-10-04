@@ -4,7 +4,7 @@ if (isset($_SESSION['is_utilisateur_connecte'])
 ?>
     <div class="new-post-container">
 
-        <button onclick="ouvrirPopup()" class="button button-primary"> Notifications </button>  
+        <button onclick="ouvrirPopup()" class="button button-primary"> 🔔 </button>  
             <script>
                 function ouvrirPopup() {
                     document.getElementById('notifications').showModal();
@@ -44,7 +44,7 @@ if (isset($_SESSION['is_utilisateur_connecte'])
 
             <div class="section-header">
                 <h1>Messages épinglés</h1>
-                <p>Informations importantes de la communauté</p>
+                <p></p>
             </div>
 
             <div class="posts-list">
@@ -153,7 +153,7 @@ if (isset($_SESSION['is_utilisateur_connecte'])
 
         <div class="section-header">
             <h1>Discussions</h1>
-            <p>Les dernières discussions de la communauté</p>
+            <p> </p>
         </div>
 
         <div class="posts-list">

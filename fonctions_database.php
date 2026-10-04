@@ -362,23 +362,25 @@ Class Interraction_bdd {
         return ;
     }
 
-    public function nouvelle_notif(){
+    public function affiche_notif(){
+        /* jointure compliquée, merci l'IA ; A travailler */
+
         ///Sert a selectionner les post non lus par l'utilisateur, pour les afficher sur la page Notif
         ///Les posts qui doivent laisser une notif
         // donc NON LUS ne sont pas entrés dans la table Notifications
         
         /*
         Je selectionne les champs de la table Message_utilisateur
-        Que je joins avec la table Utilisateur
-        Et je joins la ou il n'y a pas de correspondances(outer join) la table notifications
-        La ou il n' y a pas dentree Notifications(id_post et id_u) IS NULL
-        Et pour l'utilisateur actuel (Utilisateur.id_u = $Session['id_u'])
+        Et je joins la ou il n'y a pas de correspondances(left outer join)a la table notifications
+        en comparant le post notfication et le post message_u
+        et en comparant l'id_u avec celui du lecteur (session id_u)
+        la ou post is null (donc post non lu pour l utilisateur)
         */
         $requete_sql = $this->mysqlClient->prepare('SELECT Message_utilisateur.id_post, Message_utilisateur.id_u, 
         Message_utilisateur.message, Message_utilisateur.date_message FROM Message_utilisateur 
-        INNER JOIN Utilisateur ON Utilisateur.id_u = Utilisateur.id_u
-        LEFT OUTER JOIN Notifications ON Notifications.id_post = Message_utilisateur.id_post
-        WHERE Notifications.id_u IS NULL AND Notifications.id_post IS NULL AND Utilisateur.id_u = :id_u');
+        LEFT OUTER JOIN Notifications 
+        ON Notifications.id_post = Message_utilisateur.id_post AND Notifications.id_u = :id_u
+        WHERE Notifications.id_post IS NULL');
 
         $requete_sql->execute([':id_u' => $_SESSION['id_u']]);
         $resultat_requete = $requete_sql->fetchAll();
@@ -397,6 +399,14 @@ Class Interraction_bdd {
             $this->mysqlClient->rollBack();
             echo 'Impossible de lire la notification';
             print_r($e) ;
+        }
+        return;
+    }
+
+    public function lire_toutes_notif(){
+        $notif_a_lire = $this->affiche_notif();
+        foreach ($notif_a_lire as $notifs){
+            $this->lire_notif($notifs['id_post']);
         }
         return;
     }

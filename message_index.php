@@ -12,6 +12,7 @@ if (isset($_SESSION['is_utilisateur_connecte'])
             </script>
 
             <dialog id='notifications'> 
+                <button class="button button-primary" onclick="document.getElementById('notifications').close()">X</button>
                 <p> <?php include('notifs.php') ?> </p> 
                 <button class="button button-primary" onclick="document.getElementById('notifications').close()">X</button>
             </dialog>
@@ -195,7 +196,7 @@ if (isset($_SESSION['is_utilisateur_connecte'])
                             ?>
 
                                 <form action="action_database.php" method="post">
-                                    <input type="hidden" name="id_post"value="<?= $message['id_post']; ?>">
+                                    <input type="hidden" name="id_post" value="<?= $message['id_post']; ?>">
                                     <input type="hidden" name="provenance" value="supprimer-post">
                                     <button type="submit" name="bouton-supprimer" value="supprimer" class="post-action post-action-danger">
                                         Supprimer

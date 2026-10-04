@@ -101,7 +101,14 @@ if (isset($_POST['provenance'])){
         } else {
             echo "Vous n'etes pas a l'origine de ce post !" ;
         }
-        exit ;
+        exit() ;
+    }
+    if($_POST['provenance'] == 'marquer-vu'){
+        $action_message->lire_notif($_POST['id_notif']);
+    }
+
+    if($_POST['provenance'] == 'marquer-tout-lu'){
+        $action_message->lire_toutes_notif();
     }
 }
 

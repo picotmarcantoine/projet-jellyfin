@@ -36,21 +36,17 @@ class Connexion_bdd {
 
 class Gestion_utilisateur {
     public $mysqlClient ;
-
     ///STOCKER L'ID utilisateur dans des cookies !
-
     public function __construct(){
         $connect_bdd = new Connexion_bdd();
         $this->mysqlClient = $connect_bdd->get_connexion() ;
     }
-
     public function inscrire_utilisateur($new_email, $newpseudo, $new_mot_de_passe) {
         ///verifie que l utilisateur n utilise pas des balises html
         if (htmlspecialchars($new_email, ENT_QUOTES, 'UTF-8') !== $new_email OR htmlspecialchars($newpseudo, ENT_QUOTES, 'UTF-8') !== $newpseudo OR htmlspecialchars($new_mot_de_passe, ENT_QUOTES, 'UTF-8') !== $new_mot_de_passe) {
             echo 'Erreur, les caractères suivants : </br> < > </br> sont interdits !' ;
             return ;
         }
-    ///ajouter try/catch / transaction (suggere par claude) pour faure soit reussir toutes les requetes soit aucune !
         try{
             
             $this->mysqlClient->beginTransaction();
@@ -90,8 +86,9 @@ class Gestion_utilisateur {
             $requete_sql->execute([':id_u' => $resultat_requete['id_u'], ':id_grade' => $resultat_requete2['id_grade']]) ;
 
             ///insertion du mot de passe dans la BDD
+            $new_mot_de_passe_hash = hasher_mot_de_passe($new_mot_de_passe);
             $requete_sql = $this->mysqlClient->prepare('INSERT INTO Authentification(id_u, mot_de_passe) VALUES( :id_u, :mot_de_passe)');
-            $requete_sql->execute([':id_u' => $resultat_requete['id_u'] ,':mot_de_passe' => $new_mot_de_passe]) ;
+            $requete_sql->execute([':id_u' => $resultat_requete['id_u'] ,':mot_de_passe' => $new_mot_de_passe_hash]) ;
             echo "vous êtes desormais inscrit <strong> $newpseudo </strong> </br>";
             
             $this->mysqlClient->commit() ;
@@ -108,8 +105,6 @@ class Gestion_utilisateur {
         $this->connecter_utilisateur($new_email, $new_mot_de_passe);
         return ;
     }
-
-
     public function connecter_utilisateur($email, $mot_de_passe) {
         ///verifie que l utilisateur n utilise pas des balises html
         if (htmlspecialchars($email, ENT_QUOTES, 'UTF-8') !== $email OR htmlspecialchars($mot_de_passe, ENT_QUOTES, 'UTF-8') !== $mot_de_passe) {
@@ -126,9 +121,12 @@ class Gestion_utilisateur {
             }
             $resultat_requete = $requete_sql->fetch();
 
-            $requete_sql = $this->mysqlClient->prepare('SELECT mot_de_passe from Authentification WHERE id_u = :identifiant AND mot_de_passe = :mot_de_passe');
-            $requete_sql->execute([':identifiant' => $resultat_requete['id_u'] , ':mot_de_passe' => $mot_de_passe]) ;
-            if ($requete_sql->rowCount()==0) {
+            
+            $requete_sql = $this->mysqlClient->prepare('SELECT mot_de_passe from Authentification WHERE id_u = :identifiant');
+            $requete_sql->execute([':identifiant' => $resultat_requete['id_u']]) ;
+            $resultat_requete_mot_de_passe = $requete_sql->fetchColumn();
+            $is_mot_de_passe_ok = verifier_mot_de_passe($mot_de_passe, $resultat_requete_mot_de_passe);
+            if ($is_mot_de_passe_ok === False) {
                 echo 'Votre mot de passe n\'est pas bon ';
                 return;
             }
@@ -153,8 +151,6 @@ class Gestion_utilisateur {
         }
         return;
     }
-
-
     public function supprimer_utilisateur($id) {
         ///STOCKER L'ID utilisateur dans des cookies !
         $requete_sql = $this->mysqlClient->prepare('DELETE FROM Utilisateur WHERE id_u = :id_u');
@@ -162,8 +158,6 @@ class Gestion_utilisateur {
         echo 'Utilisateur supprimé' ;
         return ;
     }
-
-
 
     /* fin de classe !
     fin de classe !
@@ -176,8 +170,7 @@ Class Interraction_bdd {
     public function __construct(){
         $connect_bdd = new Connexion_bdd();
         $this->mysqlClient = $connect_bdd->get_connexion() ;
-        }
-    
+    } 
     public function get_grade($user_id){
         $requete_sql = $this->mysqlClient->prepare('SELECT Grade.nom_grade FROM Grade 
         INNER JOIN Utilisateur_grade ON Grade.id_grade = Utilisateur_grade.id_grade
@@ -187,15 +180,12 @@ Class Interraction_bdd {
         $resultat_requete = $requete_sql->fetch() ;
         return $resultat_requete ;
     }
-
-    
     public function get_username($user_id){
         $requete_sql = $this->mysqlClient->prepare('SELECT pseudo FROM Utilisateur WHERE id_u = :id_u') ;
         $requete_sql->execute([':id_u'=>$user_id]) ;
         $resultat_requete = $requete_sql->fetchColumn() ;
         return $resultat_requete ;
     }
-
     public function lire_message_epingle(){
         $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur 
         INNER JOIN Message_epingle ON Message_utilisateur.id_post = Message_epingle.id_post 
@@ -204,8 +194,6 @@ Class Interraction_bdd {
         $resultat_requete = $requete_sql->fetchAll() ;
         return $resultat_requete ;
     }
-    
-
     public function lire_message($nombre_message, $page){
         /*$nombre_message indique le nombre de message que l'on veut afficher sur une page, 
         et $nombre_page la page actuelle (pour la pagination)
@@ -233,14 +221,12 @@ Class Interraction_bdd {
         $resultat_requete = $requete_sql->fetchAll() ;
         return $resultat_requete ;
     }
-
     public function lire_message_id($id_post){
         $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Message_utilisateur WHERE id_post = :id_post') ;
         $requete_sql->execute(['id_post' => $id_post]);
         $resultat_requete = $requete_sql->fetch();
         return $resultat_requete ;
     }
-
     public function lire_reponses($id_post){
         $requete_sql = $this->mysqlClient->prepare('SELECT * FROM Reponse_message 
         WHERE id_post = :id_post ORDER BY date_reponse DESC');
@@ -248,7 +234,6 @@ Class Interraction_bdd {
         $resultat_requete = $requete_sql->fetchAll();
         return $resultat_requete ;
     }
-
     public function envoyer_message($message){
         ///desactive les characteres html
         $message_secure = htmlspecialchars($message, ENT_SUBSTITUTE ) ;
@@ -268,7 +253,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
     public function modifier_message($id_post, $nouveau_message){
         $message_secure = htmlspecialchars($nouveau_message, ENT_SUBSTITUTE ) ;
         try {
@@ -285,7 +269,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
     public function repondre_message($id_base_message, $reponse_utilisateur){
         $message_secure = htmlspecialchars($reponse_utilisateur, ENT_SUBSTITUTE ) ;
         try {
@@ -303,7 +286,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
     public function epingler_message($id_post){
         try {
             $this->mysqlClient->beginTransaction();
@@ -318,7 +300,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
     public function desepingler_message($id_post){
         try {
             $this->mysqlClient->beginTransaction();
@@ -332,8 +313,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
-
     public function supprimer_message($id_post){
         try {
             $this->mysqlClient->beginTransaction();
@@ -347,8 +326,7 @@ Class Interraction_bdd {
         }
         return ;
     }
-
-        public function supprimer_reponse($id_reponse){
+    public function supprimer_reponse($id_reponse){
         try {
             $this->mysqlClient->beginTransaction();
             $requete_sql = $this->mysqlClient->prepare('DELETE FROM Reponse_message WHERE id_reponse = :id_reponse') ;
@@ -361,7 +339,6 @@ Class Interraction_bdd {
         }
         return ;
     }
-
     public function affiche_notif(){
         /* jointure compliquée, merci l'IA ; A travailler */
 
@@ -375,18 +352,18 @@ Class Interraction_bdd {
         en comparant le post notfication et le post message_u
         et en comparant l'id_u avec celui du lecteur (session id_u)
         la ou post is null (donc post non lu pour l utilisateur)
+        Je Message_utilisateur.id_u != $SESSION'id_u' sert a ne pas avoir les messages dont on est l auteur
         */
         $requete_sql = $this->mysqlClient->prepare('SELECT Message_utilisateur.id_post, Message_utilisateur.id_u, 
         Message_utilisateur.message, Message_utilisateur.date_message FROM Message_utilisateur 
         LEFT OUTER JOIN Notifications 
         ON Notifications.id_post = Message_utilisateur.id_post AND Notifications.id_u = :id_u
-        WHERE Notifications.id_post IS NULL');
+        WHERE Notifications.id_post IS NULL AND Message_utilisateur.id_u != :id_u');
 
         $requete_sql->execute([':id_u' => $_SESSION['id_u']]);
         $resultat_requete = $requete_sql->fetchAll();
         return $resultat_requete ;
     }
-
     public function lire_notif($id_post){
         ///faire une boucle foreach et rentrer l'id du post en argument
         try {
@@ -402,7 +379,6 @@ Class Interraction_bdd {
         }
         return;
     }
-
     public function lire_toutes_notif(){
         $notif_a_lire = $this->affiche_notif();
         foreach ($notif_a_lire as $notifs){
@@ -416,4 +392,11 @@ Class Interraction_bdd {
     fin de classe ! */
 }
 
+function hasher_mot_de_passe($mot_de_passe){
+    return password_hash($mot_de_passe, PASSWORD_DEFAULT);
+}
+
+function verifier_mot_de_passe($mot_de_passe, $mot_de_passe_hashe){
+    return password_verify($mot_de_passe, $mot_de_passe_hashe);
+}
 ?>
